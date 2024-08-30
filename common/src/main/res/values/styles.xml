@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/grayish_blue</item>
+        <item name="android:windowBackground">@color/lavender_brush</item>
+        <item name="android:colorPrimary">@color/lavender_brush</item>
+    </style>
+
+</resources>
