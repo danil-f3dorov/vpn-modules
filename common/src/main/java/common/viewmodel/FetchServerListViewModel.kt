@@ -3,12 +3,12 @@ package common.viewmodel
 import androidx.lifecycle.ViewModel
 import com.fasterxml.jackson.databind.ObjectMapper
 import common.App
+import common.util.PrefDao
 import data.retrofit.client.RetrofitClient
 import data.retrofit.model.server.FetchServersRequest
 import data.retrofit.model.server.FetchServersResponse
 import data.room.db.VpnDatabase
 import data.room.entity.Server
-import data.sharedprefs.PrefDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,13 +18,15 @@ import java.io.ByteArrayInputStream
 
 class FetchServerListViewModel : ViewModel() {
 
-    private val serverDao = VpnDatabase.getDataBase(App.instance).getServerDao()
     private val serverApi = RetrofitClient.fetchServersApi
+    private val serverDao = VpnDatabase.getDataBase(App.instance).getServerDao()
+    private val prefDao = PrefDao(App.instance)
+
 
     fun fetchServerList(retry: () -> Unit, navigateToActivity: (server: Server) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val listVersion = PrefDao.getVersion()
+                val listVersion = prefDao.getVersion()
                 val response = serverApi.fetchServers(FetchServersRequest(listVersion))
 
                 if (response.isSuccessful) {
@@ -88,14 +90,14 @@ class FetchServerListViewModel : ViewModel() {
 
         if (listVersion == 0) {
             addServerList(newServerList)
-            PrefDao.updateVersion(newListVersion)
+            prefDao.updateVersion(newListVersion)
             return@withContext
         }
 
         if (listVersion > 0) {
             val oldServerList = serverDao.getServerList()
             updateServerList(newServerList, oldServerList)
-            PrefDao.updateVersion(newListVersion)
+            prefDao.updateVersion(newListVersion)
             return@withContext
         }
     }

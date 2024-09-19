@@ -4,15 +4,20 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import common.R
+import com.common.R
+import common.App
 
-class NotificationReceiver(private val homeClazz: Class<out AppCompatActivity>) : BroadcastReceiver() {
+class NotificationReceiver : BroadcastReceiver() {
+    val debug = "${App.instance.packageName}.activity.FetchServerListActivity"
     override fun onReceive(context: Context, intent: Intent) {
-        val homeIntent =
-            Intent(context, homeClazz).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val homeIntent = Intent().setClassName(
+            context,
+            "${App.instance.packageName}.activity.FetchServerListActivity"
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
+        }
 
         val pendingIntent = PendingIntent.getActivity(
             context,
@@ -24,7 +29,7 @@ class NotificationReceiver(private val homeClazz: Class<out AppCompatActivity>) 
         val notification = NotificationCompat.Builder(context, "channel_id")
             .setContentTitle("WARNING!")
             .setContentText("Protect your data connect to one of our VPN servers!")
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.drawable.sphere)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .build()

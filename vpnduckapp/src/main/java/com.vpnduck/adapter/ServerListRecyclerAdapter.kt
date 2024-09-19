@@ -2,21 +2,18 @@ package com.vpnduck.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.vpnduck.activity.HomeActivity
+import com.vpnduck.activity.SelectServerActivity
 import com.vpnduck.databinding.ItemServerBinding
-import com.vpnduck.screens.home.HomeActivity
-import com.vpnduck.screens.select_server.SelectServerActivity
 import common.util.parse.ParseFlag.findFlagForServer
 import common.util.parse.ParseSpeed.convertSpeedForAdapter
 import common.util.validate.ValidateUtil.validateIfCityExist
-
-import data.room.db.VpnDatabase
 import data.room.entity.Server
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,11 +24,10 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
 
     private var serverList: List<Server> = emptyList()
     private var filteredList: List<Server> = emptyList()
-    private var dao = VpnDatabase.getDataBase(activity).getServerDao()
 
     init {
         activity.lifecycleScope.launch(Dispatchers.Default) {
-            serverList = dao.getServerList()
+            serverList = activity.viewModel.serverDao.getServerList()
             filteredList = serverList
             withContext(Dispatchers.Main) {
                 notifyDataSetChanged()

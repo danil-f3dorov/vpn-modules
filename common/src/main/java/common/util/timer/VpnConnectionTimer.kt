@@ -25,7 +25,7 @@ object VpnConnectionTimer {
                     val sec = elapsedTimeInSeconds % 60
                     val timeString = String.format("%02d:%02d:%02d", hours, minutes, sec)
                     updateUI(timeString)
-                    if (!isNetworkAvailable() && internetRedirectFlag) {
+                    if (!isNetworkAvailable(activity) && internetRedirectFlag) {
                         checkInternetConnection(activity, noInternetClazz)
                         internetRedirectFlag = false
                         callback()

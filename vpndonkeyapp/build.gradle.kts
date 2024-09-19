@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 android {
 
@@ -41,42 +41,20 @@ android {
         buildConfig = true
     }
 
-    namespace = "com.donkeyvpn"
-
-    defaultConfig {
-        applicationId = "vpn.donkeyapp"
-    }
+    namespace = "com.vpndonkey"
 
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
         }
     }
+}
 
-    dependencies {
-        implementation(project(":common"))
+dependencies {
+    implementation(project(":common"))
 
-        implementation(libs.jackson.core)
-        implementation(libs.jackson.databind)
-        implementation(libs.brotli.dec)
-
-        implementation(libs.appcompat)
-        implementation(libs.material)
-        implementation(libs.activity.ktx)
-        implementation(libs.constraintlayout)
-
-        implementation(libs.retrofit)
-        implementation(libs.converter.gson)
-        implementation(libs.logging.interceptor)
-
-        implementation(libs.room.ktx)
-        ksp(libs.room.compiler)
-
-        implementation(libs.lottie)
-
-        implementation(libs.installreferrer)
-        implementation(libs.work.runtime.ktx)
-
-        implementation(libs.preference.ktx)
-    }
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity.ktx)
+    implementation(libs.constraintlayout)
 }

@@ -1,11 +1,11 @@
 package common.util.parse
 
-import common.R
+import com.common.R
 import data.room.entity.Server
 
 object ParseFlag {
-    fun findFlagForServer(server: Server): Int {
-        return when (server.short) {
+    fun findFlagForServer(server: Server?): Int {
+        return when (server?.short) {
             "KR" -> R.drawable.ic_south_korea
             "US" -> R.drawable.ic_united_states
             "AU" -> R.drawable.ic_australia

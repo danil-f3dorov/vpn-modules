@@ -5,9 +5,10 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.progun.dunta_sdk.api.DuntaManager
 import common.receiver.NotificationReceiver
+import common.viewmodel.REQUEST_CODE
 import java.util.concurrent.TimeUnit
-
 
 class App : Application() {
 
@@ -15,15 +16,15 @@ class App : Application() {
         @JvmStatic
         lateinit var instance: App
             private set
-//        lateinit var duntaManager: DuntaManager
-//            private set
+        lateinit var duntaManager: DuntaManager
+            private set
 
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-//        duntaManager = DuntaManager.create(this)
+        duntaManager = DuntaManager.create(this)
         startNotify()
     }
 
@@ -31,7 +32,7 @@ class App : Application() {
         val notificationIntent = Intent(this, NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             this,
-            0,
+            REQUEST_CODE,
             notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
