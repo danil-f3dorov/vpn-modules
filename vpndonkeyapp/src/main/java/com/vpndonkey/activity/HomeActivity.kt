@@ -6,9 +6,11 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityHomeBinding
+
 import common.activity.VpnActivity
 import common.util.timer.UpdateServerListTimer
 import common.viewmodel.HomeViewModel
+
 
 class HomeActivity : VpnActivity() {
 
@@ -50,7 +52,7 @@ class HomeActivity : VpnActivity() {
             noInternetConnectionActivity = NoInternetConnectionActivity::class.java,
             selectServerActivity = SelectServerActivity::class.java
         )
-        vm.observeStatus(this, binding.tvStatusInfo, NoInternetConnectionActivity::class.java)
+        vm.observeStatus()
     }
 }
 

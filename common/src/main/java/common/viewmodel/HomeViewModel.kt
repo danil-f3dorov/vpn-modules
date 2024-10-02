@@ -48,7 +48,7 @@ import java.lang.ref.WeakReference
 
 const val REQUEST_CODE = 919
 
-class HomeViewModel : ViewModel() {
+object HomeViewModel : ViewModel() {
     private val appContext = App.instance
     val screenStateLiveData = MutableLiveData(HomeScreenState.Disconnected)
     private var isConnected = false
@@ -75,28 +75,22 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun observeStatus(activity: AppCompatActivity, textView: TextView, noInternetClazz: Class<out AppCompatActivity>) {
+    fun observeStatus() {
         viewModelScope.launch(Dispatchers.Default) {
             observers.VpnStatusObserver.vpnState.collect { vpnState ->
-                handleVpnConnectionStatus(vpnState, activity, textView, noInternetClazz)
+                handleVpnConnectionStatus(vpnState)
             }
         }
     }
 
-
     private suspend fun handleVpnConnectionStatus(
         vpnStatus: VpnStatus.ConnectionState,
-        activity: AppCompatActivity,
-        textView: TextView,
-        noInternetClazz: Class<out AppCompatActivity>
-    ) =
-        withContext(Dispatchers.Main) {
-            if (vpnStatus == VpnStatus.ConnectionState.LEVEL_CONNECTED) {
-                startTimer(activity, textView, noInternetClazz)
-                isConnected = true
-                screenStateLiveData.value = HomeScreenState.Connected
-            }
+    ) = withContext(Dispatchers.Main) {
+        if (vpnStatus == VpnStatus.ConnectionState.LEVEL_CONNECTED) {
+            isConnected = true
+            screenStateLiveData.value = HomeScreenState.Connected
         }
+    }
 
     fun startVpn(baseContext: Context) {
         VPNLaunchHelper.startOpenVpn(vpnProfile, baseContext)
@@ -106,20 +100,6 @@ class HomeViewModel : ViewModel() {
         val intent = Intent(activity, OpenVPNService::class.java)
         intent.setAction(OpenVPNService.START_SERVICE)
         isServiceBind = activity.bindService(intent, connection, BIND_AUTO_CREATE)
-    }
-
-    private fun startTimer(
-        activity: AppCompatActivity,
-        tv: TextView,
-        noInternetClazz: Class<out AppCompatActivity>
-    ) {
-        VpnConnectionTimer.setupService(updateUI = {
-            tv.text = it
-        }, callback = {
-            stopVpn()
-        }, activity
-        )
-        VpnConnectionTimer.startTimer(noInternetClazz)
     }
 
     fun stopVpn() {
@@ -144,9 +124,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun observeTraffic(
-        tvDownloadSpeed: TextView,
-        tvUploadSpeed: TextView,
-        homeActivity: AppCompatActivity
+        tvDownloadSpeed: TextView, tvUploadSpeed: TextView, homeActivity: AppCompatActivity
     ) {
         viewModelScope.launch(Dispatchers.Default) {
             VpnTrafficObserver.downloadSpeed.combine(VpnTrafficObserver.uploadSpeed) { downloadSpeed, uploadSpeed ->
@@ -156,8 +134,7 @@ class HomeViewModel : ViewModel() {
                     tvDownloadSpeed.text = parsedDownloadSpeed
                     tvUploadSpeed.text = parsedUploadSpeed
                     notification(
-                        "↑ $parsedDownloadSpeed kb/s ↓ $parsedUploadSpeed kb/s",
-                        homeActivity
+                        "↑ $parsedDownloadSpeed kb/s ↓ $parsedUploadSpeed kb/s", homeActivity
                     )
                 }
             }
@@ -183,7 +160,6 @@ class HomeViewModel : ViewModel() {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         intent.putExtra(Server::class.java.canonicalName, currentServer)
-
 
         val pendingIntent = PendingIntent.getActivity(
             homeActivity,
@@ -211,19 +187,16 @@ class HomeViewModel : ViewModel() {
         notificationManagerCompat.notify(1, notification)
     }
 
-    companion object {
-        fun initDuntaSDK() {
-            duntaManager.setPartnerId(1)
-            duntaManager.setApplicationId(getApplicationId())
-            duntaManager.start(App.instance)
-        }
-        private fun getApplicationId(): Int {
-            return when (App.instance.packageName) {
-                "com.vpnduck" -> 3
-                else -> 4
-            }
-        }
+    fun initDuntaSDK() {
+        duntaManager.setPartnerId(1)
+        duntaManager.setApplicationId(getApplicationId())
+        duntaManager.start(App.instance)
     }
 
-
+    private fun getApplicationId(): Int {
+        return when (App.instance.packageName) {
+            "com.vpnduck" -> 3
+            else -> 4
+        }
+    }
 }

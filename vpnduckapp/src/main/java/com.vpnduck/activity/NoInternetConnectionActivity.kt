@@ -32,6 +32,7 @@ class NoInternetConnectionActivity : AppCompatActivity() {
     private fun getIntentForClass(className: String?): Intent? {
         return when (className) {
             "HomeActivity" -> Intent(this, HomeActivity::class.java)
+            "FetchServerListActivity" -> Intent(this, FetchServerListActivity::class.java)
             else -> null
         }
     }

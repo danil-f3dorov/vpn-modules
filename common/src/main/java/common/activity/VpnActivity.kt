@@ -21,6 +21,7 @@ import common.util.extensions.startActivityIfNetworkIsAvailable
 import common.util.parse.ParseFlag
 import common.util.timer.UpdateServerListTimer
 import common.util.timer.VpnConnectionTimer
+import common.util.timer.VpnConnectionTimer.startTimer
 import common.util.validate.ValidateUtil
 import common.viewmodel.HomeViewModel
 import data.room.entity.Server
@@ -65,7 +66,7 @@ abstract class VpnActivity : AppCompatActivity() {
         tvCountryName.text = ValidateUtil.validateIfCityExist(
             srv?.country ?: "Unknown", srv?.city ?: ""
         )
-        tvIpAddress.text = srv?.ip ?: "000.000.000.000"
+        tvIpAddress.text = srv?.ip ?: "000.000.000.001"
         ivCountryIcon.setImageDrawable(
             AppCompatResources.getDrawable(
                 this, ParseFlag.findFlagForServer(srv)
@@ -102,7 +103,8 @@ abstract class VpnActivity : AppCompatActivity() {
                     ibConnect = ibConnect,
                     tvDownloadSpeed = tvDownloadSpeed,
                     tvUploadSpeed = tvUploadSpeed,
-                    ibDisconnect = ibDisconnect
+                    ibDisconnect = ibDisconnect,
+                    tvStatusInfo = tvStatusInfo
                 )
 
                 HomeScreenState.Disconnected -> updateUiDisconnected(
@@ -167,6 +169,7 @@ abstract class VpnActivity : AppCompatActivity() {
     }
 
     private fun updateUiConnected(
+        tvStatusInfo: TextView,
         tvDownloadSpeed: TextView,
         tvUploadSpeed: TextView,
         ivButtonBackground: ImageView,
@@ -176,6 +179,7 @@ abstract class VpnActivity : AppCompatActivity() {
         disconnectButtonId: Int,
         ibDisconnect: Int
     ) {
+        startTimer { tvStatusInfo.text = it }
         vm.observeTraffic(tvDownloadSpeed, tvUploadSpeed, this@VpnActivity)
         ivButtonBackground.clearAnimation()
         ibConnect.setImageDrawable(

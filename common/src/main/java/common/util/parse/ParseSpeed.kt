@@ -20,9 +20,9 @@ object ParseSpeed {
 
             val numericValue = speed.substring(0, speed.length - 2).replace(",", ".").trim()
             val factor = when {
-                speed.endsWith("B") && !speed.endsWith("KB") -> 1.0 / 1024
-                speed.endsWith("KB") -> 1.0
                 speed.endsWith("MB") -> 1024.0
+                speed.endsWith("KB") -> 1.0
+                speed.endsWith("B") && !speed.endsWith("KB") -> 1.0 / 1024
                 else -> return "--"
             }
 

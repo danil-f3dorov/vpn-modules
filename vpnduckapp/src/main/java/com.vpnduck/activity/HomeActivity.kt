@@ -49,7 +49,7 @@ class HomeActivity : VpnActivity() {
             noInternetConnectionActivity = NoInternetConnectionActivity::class.java,
             selectServerActivity = SelectServerActivity::class.java
         )
-        vm.observeStatus(this, binding.tvStatusInfo, NoInternetConnectionActivity::class.java)
+        vm.observeStatus()
     }
 }
 
