@@ -31,7 +31,6 @@ class SelectServerActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val selectedServer = result.data?.getParcelableExtra("selectedServer") as Server?
                 startHomeActivity(selectedServer)
-
             }
         }
 

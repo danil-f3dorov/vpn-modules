@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity.BIND_AUTO_CREATE
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.common.R
@@ -38,6 +37,7 @@ import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnProfile
 import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,7 +50,7 @@ const val REQUEST_CODE = 919
 
 object HomeViewModel : ViewModel() {
     private val appContext = App.instance
-    val screenStateLiveData = MutableLiveData(HomeScreenState.Disconnected)
+    val screenStateLiveData = MutableStateFlow(HomeScreenState.Disconnected)
     private var isConnected = false
     var isServiceBind = false
     var vpnService: WeakReference<OpenVPNService>? = null

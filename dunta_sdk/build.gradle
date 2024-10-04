@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.library'
+}
+ext {
+    // android api versions
+    minApiLevel = 24
+    targetApiLevel = 34
+    compileApiLevel = 34
+
+    // build constants
+    ENABLE_REPORT_FILES_NAME = "ENABLE_REPORT_FILES"
+    DEBUG_LOG_NAME = "DEBUG_LOG"
+
+    PROD_SDK_RELEASE_VER_NAME = "PROD_SDK_RELEASE_VER"
+    PROD_SDK_RELEASE_VER_VALUE = "5"
+
+    GPLAY_SDK_RELEASE_VER_NAME = "GPLAY_SDK_RELEASE_VER"
+    GPLAY_SDK_RELEASE_VER_VALUE = "38"
+}
+android {
+    namespace 'com.progun.dunta_sdk'
+    compileSdk compileApiLevel
+
+    defaultConfig {
+        minSdk minApiLevel
+        targetSdk targetApiLevel
+
+        multiDexEnabled true
+    }
+
+    buildFeatures {
+        buildConfig true 
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", ENABLE_REPORT_FILES_NAME, "false"
+            buildConfigField "boolean", DEBUG_LOG_NAME, "true"
+            buildConfigField "int", PROD_SDK_RELEASE_VER_NAME, PROD_SDK_RELEASE_VER_VALUE // release version only for SDK as separate lib
+            buildConfigField "int", GPLAY_SDK_RELEASE_VER_NAME, GPLAY_SDK_RELEASE_VER_VALUE // release version sdk for google play
+        }
+
+        releaseTest {
+            buildConfigField "boolean", ENABLE_REPORT_FILES_NAME, "false"
+            buildConfigField "boolean", DEBUG_LOG_NAME, "true"
+            buildConfigField "int", PROD_SDK_RELEASE_VER_NAME, PROD_SDK_RELEASE_VER_VALUE // release version only for SDK as separate lib
+            buildConfigField "int", GPLAY_SDK_RELEASE_VER_NAME, GPLAY_SDK_RELEASE_VER_VALUE // release version sdk for google play
+        }
+
+        release {
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", ENABLE_REPORT_FILES_NAME, "true" // for release SDK this var must be TRUE. enables handling exceptions and sending to server
+            buildConfigField "boolean", DEBUG_LOG_NAME, "false" // for release SDK this var must be FALSE. this disables log
+            buildConfigField "int", PROD_SDK_RELEASE_VER_NAME, PROD_SDK_RELEASE_VER_VALUE // release version only for SDK as separate lib
+            buildConfigField "int", GPLAY_SDK_RELEASE_VER_NAME, GPLAY_SDK_RELEASE_VER_VALUE // release version sdk for google play
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.aar"])
+
+    def work_version = "2.9.0"
+    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-multiprocess:$work_version"
+
+    def ref_version = "2.2"
+    implementation "com.android.installreferrer:installreferrer:$ref_version"
+
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+
+    implementation "androidx.fragment:fragment:1.6.2"
+
+    implementation 'com.google.android.material:material:1.9.0'
+
+    implementation 'org.jetbrains:annotations:15.0'
+
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.20"))
+}

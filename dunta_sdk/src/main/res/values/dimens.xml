@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dialog_corner_radius">20dp</dimen>
+    <dimen name="dialog_title_text_size">20sp</dimen>
+    <dimen name="dialog_content_text_size">18sp</dimen>
+    <dimen name="dialog_wide_horizontal_space">40dp</dimen>
+    <dimen name="dialog_narrow_horizontal_space">30dp</dimen>
+</resources>

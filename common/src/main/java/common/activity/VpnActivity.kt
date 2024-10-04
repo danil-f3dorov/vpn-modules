@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.viewModelScope
 import com.common.R
 import common.util.dialog.VpnDisconnectDialog
 import common.util.enum.HomeScreenState
@@ -25,6 +26,8 @@ import common.util.timer.VpnConnectionTimer.startTimer
 import common.util.validate.ValidateUtil
 import common.viewmodel.HomeViewModel
 import data.room.entity.Server
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 abstract class VpnActivity : AppCompatActivity() {
 
@@ -93,36 +96,38 @@ abstract class VpnActivity : AppCompatActivity() {
         tvStatusInfo: TextView,
         ibConnectId: Int
     ) {
-        vm.screenStateLiveData.observe(this) { state ->
-            when (state) {
-                HomeScreenState.Connected -> updateUiConnected(
-                    layoutId = layoutId,
-                    disconnectButtonId = disconnectButtonId,
-                    cancelButtonId = cancelButtonId,
-                    ivButtonBackground = ivButtonBackground,
-                    ibConnect = ibConnect,
-                    tvDownloadSpeed = tvDownloadSpeed,
-                    tvUploadSpeed = tvUploadSpeed,
-                    ibDisconnect = ibDisconnect,
-                    tvStatusInfo = tvStatusInfo
-                )
+        vm.viewModelScope.launch(Dispatchers.Main) {
+            vm.screenStateLiveData.collect { state ->
+                when (state) {
+                    HomeScreenState.Connected -> updateUiConnected(
+                        layoutId = layoutId,
+                        disconnectButtonId = disconnectButtonId,
+                        cancelButtonId = cancelButtonId,
+                        ivButtonBackground = ivButtonBackground,
+                        ibConnect = ibConnect,
+                        tvDownloadSpeed = tvDownloadSpeed,
+                        tvUploadSpeed = tvUploadSpeed,
+                        ibDisconnect = ibDisconnect,
+                        tvStatusInfo = tvStatusInfo
+                    )
 
-                HomeScreenState.Disconnected -> updateUiDisconnected(
-                    ivButtonBackground = ivButtonBackground,
-                    ibConnect = ibConnect,
-                    tvDownloadSpeed = tvDownloadSpeed,
-                    tvUploadSpeed = tvUploadSpeed,
-                    tvStatusInfo = tvStatusInfo,
-                    ibConnectId = ibConnectId
-                )
+                    HomeScreenState.Disconnected -> updateUiDisconnected(
+                        ivButtonBackground = ivButtonBackground,
+                        ibConnect = ibConnect,
+                        tvDownloadSpeed = tvDownloadSpeed,
+                        tvUploadSpeed = tvUploadSpeed,
+                        tvStatusInfo = tvStatusInfo,
+                        ibConnectId = ibConnectId
+                    )
 
-                HomeScreenState.Connecting -> updateUiConnecting(
-                    tvStatusInfo = tvStatusInfo,
-                    ivButtonBackground = ivButtonBackground,
-                    ibConnect = ibConnect
-                )
+                    HomeScreenState.Connecting -> updateUiConnecting(
+                        tvStatusInfo = tvStatusInfo,
+                        ivButtonBackground = ivButtonBackground,
+                        ibConnect = ibConnect
+                    )
 
-                null -> {}
+                    null -> {}
+                }
             }
         }
     }
@@ -347,5 +352,4 @@ abstract class VpnActivity : AppCompatActivity() {
             notificationManager?.createNotificationChannel(channel)
         }
     }
-
 }

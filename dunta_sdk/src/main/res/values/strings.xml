@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ProxyTest</string>
+
+    <public name="sdk_name" type="string">SDK</public>
+    <string name="proxy_description_title">Get Instant Free Hint</string>
+    <string name="proxy_description_text">
+        To get free hint, allow MAFIX LTD to use your device\'s free resources and IP address to download public web data from the Internet while you are using my app.
+        \n\nNone of your personal information is collected.
+        \n\nYour participation is totally optional and you may opt out at any time in your app settings.</string>
+    <string name="proxy_description_accept_btn">OK, Get Reward</string>
+    <string name="proxy_description_decline_btn">No, Thanks</string>
+    <string name="proxy_description_policy_text">Read MAFIX LTD\'s Private Policy</string>
+    <string name="proxy_description_private_pol_item">Private Policy</string>
+    <string name="proxy_description_private_eula_item">End User License Agreement</string>
+
+    <string name="proxy_policy_link">https://zmoba.com/privacyPolicy</string>
+    <string name="proxy_terms_link">https://zmoba.com/termsOfUse</string>
+
+</resources>

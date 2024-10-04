@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/proxyDescriptionTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"
+            android:layout_marginTop="20dp"
+            tools:text="proxy_description_titleproxy_description_titleproxy_description_titleproxy_description_titleproxy_description_title"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:backgroundTint="@color/white"
+            android:layout_weight="1"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/proxyDescriptionText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/dialog_wide_horizontal_space"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/proxyDescriptionTitle"
+            android:textColor="#808080"
+            android:text="@string/proxy_description_text"
+            android:backgroundTint="@color/white"
+            android:layout_weight="5"
+            android:textSize="20sp" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/proxyDescriptionAcceptBtn"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"
+            android:layout_marginTop="60dp"
+            android:backgroundTint="@color/blue"
+            app:layout_constraintBottom_toTopOf="@id/proxyDescriptionDeclineBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/proxyDescriptionText"
+            android:text="@string/proxy_description_accept_btn"
+            android:layout_weight="1"
+            android:textColor="@color/white" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/proxyDescriptionDeclineBtn"
+            android:layout_width="0dp"
+            app:layout_constraintBottom_toTopOf="@id/proxyDescriptionPolicy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/white"
+            android:text="@string/proxy_description_decline_btn"
+            android:layout_weight="1"
+            android:textColor="@color/blue" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/proxyDescriptionPolicy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/dialog_content_text_color_gray"
+            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="@dimen/dialog_wide_horizontal_space"
+            android:layout_weight="1"
+            android:text="@string/proxy_description_policy_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:orientation="vertical">-->
+
+<!--&lt;!&ndash;        android:text="@string/proxy_description_title"&ndash;&gt;-->
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/proxyDescriptionTitle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            tools:text="proxy_description_titleproxy_description_titleproxy_description_titleproxy_description_titleproxy_description_title"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="20sp"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            android:layout_weight="1"-->
+<!--            android:textStyle="bold" />-->
+
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/proxyDescriptionText"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginHorizontal="@dimen/dialog_wide_horizontal_space"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="#808080"-->
+<!--            android:text="@string/proxy_description_text"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            android:layout_weight="5"-->
+<!--            android:textSize="20sp" />-->
+
+
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/proxyDescriptionAcceptBtn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"-->
+<!--            android:layout_marginTop="60dp"-->
+<!--            android:backgroundTint="@color/blue"-->
+<!--            android:text="@string/proxy_description_accept_btn"-->
+<!--            android:layout_weight="1"-->
+<!--            android:textColor="@color/white" />-->
+
+
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/proxyDescriptionDeclineBtn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_marginHorizontal="@dimen/dialog_narrow_horizontal_space"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            android:text="@string/proxy_description_decline_btn"-->
+<!--            android:layout_weight="1"-->
+<!--            android:textColor="@color/blue" />-->
+
+
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/proxyDescriptionPolicy"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textColor="@color/dialog_content_text_color_gray"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:layout_marginHorizontal="@dimen/dialog_wide_horizontal_space"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="@string/proxy_description_policy_text" />-->
+<!--    </LinearLayout>-->
+
+</ScrollView>

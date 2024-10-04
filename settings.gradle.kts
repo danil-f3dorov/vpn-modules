@@ -9,8 +9,8 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        flatDir {
-            dirs("libs")
+        maven {
+            url = uri("${rootDir}/maven")
         }
     }
 }
@@ -20,8 +20,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs("libs")
+        maven {
+            url = uri("${rootDir}/maven")
         }
     }
 
@@ -32,3 +32,4 @@ include(":vpnduckapp")
 include(":vpndonkeyapp")
 include(":common")
 include(":vpn")
+include(":dunta_sdk")

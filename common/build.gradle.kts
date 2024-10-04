@@ -37,7 +37,7 @@ android {
     
     dependencies {
         implementation(project(":vpn"))
-        implementation(files("libs/dunta_sdk-release.aar"))
+        implementation(project(":dunta_sdk"))
 
         implementation(libs.jackson.core)
         implementation(libs.jackson.databind)
