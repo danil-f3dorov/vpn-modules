@@ -11,23 +11,27 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.vpnduck.activity.HomeActivity
 import com.vpnduck.activity.SelectServerActivity
 import com.vpnduck.databinding.ItemServerBinding
+import common.domain.model.Server
+import common.domain.usecase.GetServerListUseCase
+import common.util.extensions.toParcelable
 import common.util.parse.ParseFlag.findFlagForServer
 import common.util.parse.ParseSpeed.convertSpeedForAdapter
 import common.util.validate.ValidateUtil.validateIfCityExist
-import data.room.entity.Server
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
-    RecyclerView.Adapter<ServerListRecyclerAdapter.ServerVH>(), SearchView.OnQueryTextListener {
+class ServerListRecyclerAdapter(
+    private val activity: SelectServerActivity,
+    private val getServerListUseCase: GetServerListUseCase
+) : RecyclerView.Adapter<ServerListRecyclerAdapter.ServerVH>(), SearchView.OnQueryTextListener {
 
     private var serverList: List<Server> = emptyList()
     private var filteredList: List<Server> = emptyList()
 
     init {
         activity.lifecycleScope.launch(Dispatchers.Default) {
-            serverList = activity.viewModel.serverDao.getServerList()
+            serverList = getServerListUseCase.execute()
             filteredList = serverList
             withContext(Dispatchers.Main) {
                 notifyDataSetChanged()
@@ -37,9 +41,7 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerVH {
         val itemBinding: ItemServerBinding = ItemServerBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return ServerVH(itemBinding, activity)
     }
@@ -50,18 +52,20 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
         holder.bind(filteredList[position])
     }
 
-    class ServerVH(private val itemBinding: ItemServerBinding, private val activity: SelectServerActivity) :
-        ViewHolder(itemBinding.root) {
+    class ServerVH(
+        private val itemBinding: ItemServerBinding, private val activity: SelectServerActivity
+    ) : ViewHolder(itemBinding.root) {
 
         fun bind(server: Server) = with(itemBinding) {
             tvCityName.text = validateIfCityExist(server.country, server.city)
             tvIpAddressNotify.text = server.ip
             tvSpeed.text = convertSpeedForAdapter(server)
-            ivCountryIcon.setImageDrawable(AppCompatResources.getDrawable
-                (root.context, findFlagForServer(server)))
+            ivCountryIcon.setImageDrawable(
+                AppCompatResources.getDrawable(root.context, findFlagForServer(server))
+            )
             root.setOnClickListener {
                 val intent = Intent(itemView.context, HomeActivity::class.java)
-                intent.putExtra(Server::class.java.canonicalName, server)
+                intent.putExtra(Server::class.java.canonicalName, server.toParcelable())
                 activity.requestPermissionLauncher.launch(intent)
             }
         }
@@ -75,7 +79,9 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let { text ->
             filteredList = serverList.filter { server ->
-                server.country.contains(text, ignoreCase = true) || server.city.contains(text, ignoreCase = true)
+                server.country.contains(text, ignoreCase = true) || server.city.contains(
+                    text, ignoreCase = true
+                )
             }
             notifyDataSetChanged()
         }

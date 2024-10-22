@@ -1,7 +1,7 @@
 package common.util.parse
 
 import com.common.R
-import data.room.entity.Server
+import common.domain.model.Server
 
 object ParseFlag {
     fun findFlagForServer(server: Server?): Int {

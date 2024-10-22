@@ -23,13 +23,14 @@ import androidx.lifecycle.viewModelScope
 import com.common.R
 import common.App
 import common.App.Companion.duntaManager
-import common.util.callback.SocketCallbackImpl
+import common.callback.SocketCallbackImpl
+import common.data.remote.client.RetrofitClient
+import common.domain.model.Server
+import common.model.ServerParcelable
 import common.util.enum.HomeScreenState
+import common.util.extensions.toParcelable
 import common.util.parse.ParseSpeed.parseSpeed
 import common.util.timer.VpnConnectionTimer
-import data.retrofit.client.RetrofitClient
-import data.room.db.VpnDatabase
-import data.room.entity.Server
 import de.blinkt.openvpn.core.ConfigParser
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.ProfileManager
@@ -48,7 +49,8 @@ import java.lang.ref.WeakReference
 
 const val REQUEST_CODE = 919
 
-object HomeViewModel : ViewModel() {
+
+class HomeViewModel : ViewModel() {
     private val appContext = App.instance
     val screenStateLiveData = MutableStateFlow(HomeScreenState.Disconnected)
     private var isConnected = false
@@ -56,9 +58,7 @@ object HomeViewModel : ViewModel() {
     var vpnService: WeakReference<OpenVPNService>? = null
     var currentServer: Server? = null
     private var vpnProfile: VpnProfile? = null
-    var api = RetrofitClient.fetchServersApi
-    val serverDao = VpnDatabase.getDataBase(App.instance).getServerDao()
-
+    var api = RetrofitClient.fetchServerListApi
 
     val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -159,7 +159,7 @@ object HomeViewModel : ViewModel() {
         val intent = Intent(homeActivity, homeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-        intent.putExtra(Server::class.java.canonicalName, currentServer)
+        intent.putExtra(ServerParcelable::class.java.canonicalName, currentServer!!.toParcelable())
 
         val pendingIntent = PendingIntent.getActivity(
             homeActivity,
@@ -187,16 +187,18 @@ object HomeViewModel : ViewModel() {
         notificationManagerCompat.notify(1, notification)
     }
 
-    fun initDuntaSDK() {
-        duntaManager.setPartnerId(1)
-        duntaManager.setApplicationId(getApplicationId())
-        duntaManager.start(App.instance)
-    }
+    companion object {
+        fun initDuntaSDK() {
+            duntaManager.setPartnerId(1)
+            duntaManager.setApplicationId(getApplicationId())
+            duntaManager.start(App.instance)
+        }
 
-    private fun getApplicationId(): Int {
-        return when (App.instance.packageName) {
-            "com.vpnduck" -> 3
-            else -> 4
+        private fun getApplicationId(): Int {
+            return when (App.instance.packageName) {
+                "com.vpnduck" -> 3
+                else -> 4
+            }
         }
     }
 }

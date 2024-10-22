@@ -7,9 +7,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityLoaderBinding
+import common.domain.model.Server
 import common.util.extensions.startActivityIfNetworkIsAvailable
+import common.util.extensions.toParcelable
 import common.viewmodel.FetchServerListViewModel
-import data.room.entity.Server
 
 class FetchServerListActivity : AppCompatActivity() {
 
@@ -37,7 +38,7 @@ class FetchServerListActivity : AppCompatActivity() {
                 Intent(this, SelectServerActivity::class.java)
             } else {
                 Intent(this, HomeActivity::class.java).apply {
-                    putExtra(Server::class.java.canonicalName, server)
+                    putExtra(Server::class.java.canonicalName, server.toParcelable())
                 }
             }
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)

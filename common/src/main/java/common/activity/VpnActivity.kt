@@ -16,16 +16,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.viewModelScope
 import com.common.R
-import common.util.dialog.VpnDisconnectDialog
+import common.dialog.VpnDisconnectDialog
+import common.domain.model.Server
+import common.model.ServerParcelable
 import common.util.enum.HomeScreenState
 import common.util.extensions.startActivityIfNetworkIsAvailable
+import common.util.extensions.toServer
 import common.util.parse.ParseFlag
 import common.util.timer.UpdateServerListTimer
 import common.util.timer.VpnConnectionTimer
 import common.util.timer.VpnConnectionTimer.startTimer
 import common.util.validate.ValidateUtil
 import common.viewmodel.HomeViewModel
-import data.room.entity.Server
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -78,9 +80,9 @@ abstract class VpnActivity : AppCompatActivity() {
     }
 
     private fun setCurrentServer() {
-        val extraServer = intent.getParcelableExtra<Server>(Server::class.java.canonicalName)
+        val extraServer = intent.getParcelableExtra<ServerParcelable>(Server::class.java.canonicalName)
         if (extraServer != null) {
-            vm.currentServer = extraServer
+            vm.currentServer = extraServer.toServer()
         }
     }
 

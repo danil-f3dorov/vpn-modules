@@ -1,33 +1,40 @@
 package common.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.fasterxml.jackson.databind.ObjectMapper
 import common.App
+import common.data.remote.model.FetchServerListResponse
+import common.domain.model.Server
+import common.domain.usecase.AddServerListUseCase
+import common.domain.usecase.AddServerUseCase
+import common.domain.usecase.DeleteServerUseCase
+import common.domain.usecase.FetchServerListUseCase
+import common.domain.usecase.GetServerListUseCase
 import common.util.PrefDao
-import data.retrofit.client.RetrofitClient
-import data.retrofit.model.server.FetchServersRequest
-import data.retrofit.model.server.FetchServersResponse
-import data.room.db.VpnDatabase
-import data.room.entity.Server
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.brotli.dec.BrotliInputStream
+import org.koin.java.KoinJavaComponent.inject
 import java.io.ByteArrayInputStream
 
-class FetchServerListViewModel : ViewModel() {
-
-    private val serverApi = RetrofitClient.fetchServersApi
-    private val serverDao = VpnDatabase.getDataBase(App.instance).getServerDao()
+class FetchServerListViewModel(
+) : ViewModel() {
     private val prefDao = PrefDao(App.instance)
-
+    private val fetchServerListUseCase: FetchServerListUseCase by inject(FetchServerListUseCase::class.java)
+    private val getServerListUseCase: GetServerListUseCase by inject(GetServerListUseCase::class.java)
+    private val addServerListUseCase: AddServerListUseCase by inject(AddServerListUseCase::class.java)
+    private val addServerUseCase: AddServerUseCase by inject(AddServerUseCase::class.java)
+    private val deleteServerUseCase: DeleteServerUseCase by inject(DeleteServerUseCase::class.java)
 
     fun fetchServerList(retry: () -> Unit, navigateToActivity: (server: Server) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val listVersion = prefDao.getVersion()
-                val response = serverApi.fetchServers(FetchServersRequest(listVersion))
+                val response = fetchServerListUseCase.execute(listVersion)
+                Log.i("response", response.isSuccessful.toString())
 
                 if (response.isSuccessful) {
                     response.body()?.byteStream()?.use { byteStream ->
@@ -36,14 +43,14 @@ class FetchServerListViewModel : ViewModel() {
                             val inputStream = ByteArrayInputStream(byteData)
                             val objectMapper = ObjectMapper()
                             val fetchServersResponse = objectMapper.readValue(
-                                inputStream, FetchServersResponse::class.java
+                                inputStream, FetchServerListResponse::class.java
                             )
                             setCurrentServer(
-                                fetchServersResponse.servers, retry, navigateToActivity
+                                fetchServersResponse.server, retry, navigateToActivity
                             )
                             val serverListVersion = fetchServersResponse.version?.toInt()
                             saveServerList(
-                                fetchServersResponse.servers, listVersion, serverListVersion
+                                fetchServersResponse.server, listVersion, serverListVersion
                             )
                         }
                     }
@@ -51,6 +58,7 @@ class FetchServerListViewModel : ViewModel() {
                     withContext(Dispatchers.Main) { retry() }
                 }
             } catch (e: Exception) {
+                Log.i("response", e.message.toString())
                 withContext(Dispatchers.Main) { retry() }
             }
 
@@ -70,7 +78,7 @@ class FetchServerListViewModel : ViewModel() {
             navigateToActivity(randomServer)
             return
         } else {
-            val serverListDB = serverDao.getServerList()
+            val serverListDB = getServerListUseCase.execute()
             if (serverListDB.isNotEmpty()) {
                 setCurrentServer(serverListDB, retry, navigateToActivity)
             } else {
@@ -95,7 +103,7 @@ class FetchServerListViewModel : ViewModel() {
         }
 
         if (listVersion > 0) {
-            val oldServerList = serverDao.getServerList()
+            val oldServerList = getServerListUseCase.execute()
             updateServerList(newServerList, oldServerList)
             prefDao.updateVersion(newListVersion)
             return@withContext
@@ -106,18 +114,18 @@ class FetchServerListViewModel : ViewModel() {
         withContext(Dispatchers.Default) {
             for (server in oldServerList) {
                 if (!newServerList.contains(server)) {
-                    serverDao.deleteServer(server)
+                    deleteServerUseCase.execute(server)
                 }
             }
             for (server in newServerList) {
                 if (!oldServerList.contains(server)) {
-                    serverDao.addServer(server)
+                    addServerUseCase.execute(server)
                 }
             }
         }
 
     private suspend fun addServerList(newServerList: List<Server>) =
         withContext(Dispatchers.Default) {
-            serverDao.addServerList(newServerList)
+            addServerListUseCase.execute(newServerList)
         }
 }

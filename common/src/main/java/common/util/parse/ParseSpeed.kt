@@ -1,6 +1,6 @@
 package common.util.parse
 
-import data.room.entity.Server
+import common.domain.model.Server
 
 
 object ParseSpeed {

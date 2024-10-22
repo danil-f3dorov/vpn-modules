@@ -38,6 +38,10 @@ android {
     dependencies {
         implementation(project(":vpn"))
         implementation(project(":dunta_sdk"))
+        implementation(project(":domain"))
+        implementation(project(":data"))
+
+        implementation("io.insert-koin:koin-android:4.0.0")
 
         implementation(libs.jackson.core)
         implementation(libs.jackson.databind)

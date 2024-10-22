@@ -11,15 +11,20 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.vpndonkey.activity.HomeActivity
 import com.vpndonkey.activity.SelectServerActivity
 import com.vpndonkey.databinding.ItemServerBinding
+import common.domain.model.Server
+import common.domain.usecase.GetServerListUseCase
+import common.util.extensions.toParcelable
 import common.util.parse.ParseFlag.findFlagForServer
 import common.util.parse.ParseSpeed.convertSpeedForAdapter
 import common.util.validate.ValidateUtil.validateIfCityExist
-import data.room.entity.Server
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
+class ServerListRecyclerAdapter(
+    private val activity: SelectServerActivity,
+    private val getServerListUseCase: GetServerListUseCase
+) :
     RecyclerView.Adapter<ServerListRecyclerAdapter.ServerVH>(), SearchView.OnQueryTextListener {
 
     private var serverList: List<Server> = emptyList()
@@ -27,7 +32,7 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
 
     init {
         activity.lifecycleScope.launch(Dispatchers.Default) {
-            serverList = activity.viewModel.serverDao.getServerList()
+            serverList = getServerListUseCase.execute()
             filteredList = serverList
             withContext(Dispatchers.Main) {
                 notifyDataSetChanged()
@@ -61,7 +66,7 @@ class ServerListRecyclerAdapter(private val activity: SelectServerActivity) :
                 (root.context, findFlagForServer(server)))
             root.setOnClickListener {
                 val intent = Intent(itemView.context, HomeActivity::class.java)
-                intent.putExtra(Server::class.java.canonicalName, server)
+                intent.putExtra(Server::class.java.canonicalName, server.toParcelable())
                 activity.requestPermissionLauncher.launch(intent)
             }
         }

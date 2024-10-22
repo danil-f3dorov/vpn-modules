@@ -1,4 +1,4 @@
--keep class data.retrofit.model.server.FetchServersRequest { *; }
--keep class data.retrofit.model.server.FetchServersResponse { *; }
+-keep class common.data.remote.model.server.FetchServersRequest { *; }
+-keep class common.data.remote.model.server.FetchServersResponse { *; }
 -ignorewarnings
 

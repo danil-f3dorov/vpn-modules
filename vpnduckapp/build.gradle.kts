@@ -53,6 +53,9 @@ android {
 
 dependencies {
     implementation(project(":common"))
+    implementation(project(":domain"))
+
+    implementation("io.insert-koin:koin-android:4.0.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

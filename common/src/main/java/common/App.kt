@@ -6,11 +6,15 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.progun.dunta_sdk.api.DuntaManager
+import common.di.dataModule
+import common.di.domainModule
 import common.receiver.NotificationReceiver
 import common.viewmodel.REQUEST_CODE
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import java.util.concurrent.TimeUnit
 
-class App : Application() {
+open class App : Application() {
 
     companion object {
         @JvmStatic
@@ -23,6 +27,10 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@App)
+            modules(listOf(dataModule, domainModule))
+        }
         instance = this
         duntaManager = DuntaManager.create(this)
         startNotify()

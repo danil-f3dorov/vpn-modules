@@ -13,17 +13,6 @@ fun isNetworkAvailable(context: Context): Boolean {
     return networkInfo != null && networkInfo.isConnected
 }
 
-fun checkInternetConnection(context: Context, clazzNoInternet: Class<out AppCompatActivity>): Boolean {
-    if (!isNetworkAvailable(context)) {
-        val newIntent = Intent(context, clazzNoInternet)
-        newIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        newIntent.putExtra("callingClassName", context.javaClass.simpleName)
-        context.startActivity(newIntent)
-        return false
-    }
-    return true
-}
-
 fun Context.startActivityIfNetworkIsAvailable(intent: Intent, clazzNoInternet: Class<out AppCompatActivity>) {
     if (!isNetworkAvailable(this)) {
         val newIntent = Intent(this, clazzNoInternet)
