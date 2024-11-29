@@ -8,6 +8,7 @@ import android.content.Intent
 import com.progun.dunta_sdk.api.DuntaManager
 import common.di.dataModule
 import common.di.domainModule
+import common.di.viewModelModule
 import common.receiver.NotificationReceiver
 import common.viewmodel.REQUEST_CODE
 import org.koin.android.ext.koin.androidContext
@@ -22,14 +23,14 @@ open class App : Application() {
             private set
         lateinit var duntaManager: DuntaManager
             private set
-
     }
 
     override fun onCreate() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(listOf(dataModule, domainModule))
+            modules(listOf(dataModule, domainModule, viewModelModule))
+            printLogger()
         }
         instance = this
         duntaManager = DuntaManager.create(this)

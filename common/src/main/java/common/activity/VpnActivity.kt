@@ -18,14 +18,11 @@ import androidx.lifecycle.viewModelScope
 import com.common.R
 import common.dialog.VpnDisconnectDialog
 import common.domain.model.Server
-import common.model.ServerParcelable
 import common.util.enum.HomeScreenState
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.util.extensions.toServer
 import common.util.parse.ParseFlag
 import common.util.timer.UpdateServerListTimer
 import common.util.timer.VpnConnectionTimer
-import common.util.timer.VpnConnectionTimer.startTimer
 import common.util.validate.ValidateUtil
 import common.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +32,7 @@ abstract class VpnActivity : AppCompatActivity() {
 
     abstract val vm: HomeViewModel
     private var isConnected = false
+    private val vpnTimer = VpnConnectionTimer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +78,9 @@ abstract class VpnActivity : AppCompatActivity() {
     }
 
     private fun setCurrentServer() {
-        val extraServer = intent.getParcelableExtra<ServerParcelable>(Server::class.java.canonicalName)
+        val extraServer = intent.getParcelableExtra<Server>(Server::class.java.canonicalName)
         if (extraServer != null) {
-            vm.currentServer = extraServer.toServer()
+            vm.currentServer = extraServer
         }
     }
 
@@ -186,7 +184,7 @@ abstract class VpnActivity : AppCompatActivity() {
         disconnectButtonId: Int,
         ibDisconnect: Int
     ) {
-        startTimer { tvStatusInfo.text = it }
+        vpnTimer.startTimer { tvStatusInfo.text = it }
         vm.observeTraffic(tvDownloadSpeed, tvUploadSpeed, this@VpnActivity)
         ivButtonBackground.clearAnimation()
         ibConnect.setImageDrawable(
@@ -246,7 +244,7 @@ abstract class VpnActivity : AppCompatActivity() {
             cancelButtonId = cancelButtonId
         ) {
             vm.screenStateLiveData.value = HomeScreenState.Disconnected
-            VpnConnectionTimer.stopTimer()
+            vpnTimer.stopTimer()
             vm.stopVpn()
         }.show()
     }
@@ -277,7 +275,7 @@ abstract class VpnActivity : AppCompatActivity() {
                         disconnectButtonId = disconnectButtonId
                     ) {
                         vm.screenStateLiveData.value = HomeScreenState.Disconnected
-                        VpnConnectionTimer.stopTimer()
+                        vpnTimer.stopTimer()
                         vm.stopVpn()
                         startSelectServerActivity(
                             fetchServerListActivityClass = fetchServerListActivityClass,

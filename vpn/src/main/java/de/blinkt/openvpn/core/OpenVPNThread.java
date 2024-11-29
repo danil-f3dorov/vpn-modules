@@ -81,22 +81,10 @@ public class OpenVPNThread implements Runnable {
             }
             if (exitvalue != 0) {
                 VpnStatus.logError("Process exited with exit value " + exitvalue);
-                if (mBrokenPie) {
-                    /* This will probably fail since the NoPIE binary is probably not written */
-                    String[] noPieArgv = VPNLaunchHelper.replacePieWithNoPie(mArgv);
-
-                    // We are already noPIE, nothing to gain
-                    if (!noPieArgv.equals(mArgv)) {
-                        mArgv = noPieArgv;
-                        VpnStatus.logInfo("PIE Version could not be executed. Trying no PIE version");
-                        run();
-                        return;
-                    }
-                }
             }
 
             if (!mNoProcessExitStatus)
-                VpnStatus.updateStateString("NOPROCESS", "No process running.", R.string.state_noprocess, ConnectionState.LEVEL_NOT_CONNECTED);
+                VpnStatus.updateStateString("NO_PROCESS", "No process running.", R.string.state_noprocess, ConnectionState.LEVEL_NOT_CONNECTED);
 
             if (mDumpPath != null) {
                 try {
@@ -139,7 +127,6 @@ public class OpenVPNThread implements Runnable {
 
         try {
             mProcess = pb.start();
-            // Close the output, since we don't need it
             mProcess.getOutputStream().close();
             InputStream in = mProcess.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -191,7 +178,6 @@ public class OpenVPNThread implements Runnable {
     }
 
     private String genLibraryPath(String[] argv, ProcessBuilder pb) {
-        // Hack until I find a good way to get the real library path
         String applibpath = argv[0].replaceFirst("/cache/.*$", "/lib");
 
         String lbpath = pb.environment().get("LD_LIBRARY_PATH");
@@ -204,7 +190,5 @@ public class OpenVPNThread implements Runnable {
             lbpath = mNativeDir + ":" + lbpath;
         }
         return lbpath;
-//        return mNativeDir;
-//        return "/data/data/com.vasilkoff.easyvpnfree/lib";
     }
 }

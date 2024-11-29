@@ -114,14 +114,6 @@ public class ReferrerMgr {
             @Override
             public void onInstallReferrerSetupFinished(int response) {
                 switch (response) {
-                    /*case InstallReferrerClient.InstallReferrerResponse.OK ->
-                            handleReferrerResponseOK();
-                    case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED ->
-                            handleReferrerResponseFeatureNotSupported();
-                    case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE ->
-                            handleReferrerResponseUnavailable();
-                    case InstallReferrerClient.InstallReferrerResponse.SERVICE_DISCONNECTED ->
-                            handleServiceDisconnected();*/
                     case InstallReferrerClient.InstallReferrerResponse.OK:
                         handleReferrerResponseOK();
                         break;

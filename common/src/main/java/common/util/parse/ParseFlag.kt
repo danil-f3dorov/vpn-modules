@@ -160,7 +160,6 @@ object ParseFlag {
             "IE" -> R.drawable.ic_ireland
             "PW" -> R.drawable.ic_palau
             "VE" -> R.drawable.ic_venezuela
-
             else -> R.drawable.ic_cross
         }
 

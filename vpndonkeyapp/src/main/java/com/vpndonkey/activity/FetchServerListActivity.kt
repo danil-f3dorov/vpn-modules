@@ -3,20 +3,19 @@ package com.vpndonkey.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityLoaderBinding
 import common.domain.model.Server
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.util.extensions.toParcelable
 import common.viewmodel.FetchServerListViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FetchServerListActivity : AppCompatActivity() {
 
     private var _binding: ActivityLoaderBinding? = null
     private val binding get() = _binding!!
-    val viewModel by viewModels<FetchServerListViewModel>()
+    private val viewModel by viewModel<FetchServerListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class FetchServerListActivity : AppCompatActivity() {
                 Intent(this, SelectServerActivity::class.java)
             } else {
                 Intent(this, HomeActivity::class.java).apply {
-                    putExtra(Server::class.java.canonicalName, server.toParcelable())
+                    putExtra(Server::class.java.canonicalName, server)
                 }
             }
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)

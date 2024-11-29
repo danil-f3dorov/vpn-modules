@@ -2,7 +2,7 @@ package common.util.timer
 
 import android.os.CountDownTimer
 
-object VpnConnectionTimer {
+class VpnConnectionTimer {
 
     private var elapsedTimeInSeconds = 0
     private var isTimerStart = false

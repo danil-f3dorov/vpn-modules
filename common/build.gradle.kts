@@ -16,10 +16,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+    buildTypes {
+        release {
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
+        }
     }
 
     namespace = "com.common"
@@ -34,7 +40,7 @@ android {
         }
     }
 
-    
+
     dependencies {
         implementation(project(":vpn"))
         implementation(project(":dunta_sdk"))

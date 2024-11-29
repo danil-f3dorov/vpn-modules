@@ -13,7 +13,6 @@ import com.vpnduck.activity.SelectServerActivity
 import com.vpnduck.databinding.ItemServerBinding
 import common.domain.model.Server
 import common.domain.usecase.GetServerListUseCase
-import common.util.extensions.toParcelable
 import common.util.parse.ParseFlag.findFlagForServer
 import common.util.parse.ParseSpeed.convertSpeedForAdapter
 import common.util.validate.ValidateUtil.validateIfCityExist
@@ -65,11 +64,10 @@ class ServerListRecyclerAdapter(
             )
             root.setOnClickListener {
                 val intent = Intent(itemView.context, HomeActivity::class.java)
-                intent.putExtra(Server::class.java.canonicalName, server.toParcelable())
+                intent.putExtra(Server::class.java.canonicalName, server)
                 activity.requestPermissionLauncher.launch(intent)
             }
         }
-
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

@@ -1,3 +1,6 @@
 package common.data.remote.model
 
-class FetchServerListRequest(val version: Int)
+import androidx.annotation.Keep
+
+
+data class FetchServerListRequest(val version: Int)

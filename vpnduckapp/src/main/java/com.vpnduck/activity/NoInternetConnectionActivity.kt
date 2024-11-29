@@ -41,6 +41,4 @@ class NoInternetConnectionActivity : AppCompatActivity() {
         super.onDestroy()
         _binding = null
     }
-
-
 }

@@ -83,8 +83,8 @@ interface ClientStarter {
  */
 public class DuntaService extends Service implements ClientStarter {
 
-
     private AtomicInteger relaunchAfterCrashCounter = new AtomicInteger(0);
+    public static Notification notification;
     private final int RELAUNCH_CRASH_COUNT = 5;
     static public final String ACTION_SINGLE_WORKER = "ACTION_SINGLE_WORKER";
     static public final String ACTION_REPEATED_WORKER = "ACTION_REPEATED_WORKER";
@@ -760,9 +760,6 @@ public class DuntaService extends Service implements ClientStarter {
             if (!notificationTitleText.equals(notificationTitle))
                 notificationTitle = notificationTitleText;
 
-            Notification notification =
-                    createNotification(notificationIconId, notificationContent, notificationTitle);
-
             startForeground(START_FOREGROUND_ID, notification);
         }
     }
@@ -1253,7 +1250,7 @@ public class DuntaService extends Service implements ClientStarter {
         LogWrap.v(TAG, "handleInstalledResponseOK()");
         LogWrap.v(TAG, "handleInstalledResponseOK()");
         int referrerId;
-        String urlParamReferrer = "none";
+        String urlParamReferrer;
 
         String parsedIdFromUrl = null;
         try {
@@ -1286,11 +1283,12 @@ public class DuntaService extends Service implements ClientStarter {
             referrerId = ReferrerConsts.MARKS.RESPONSE_PARSE_ERROR;
             saveReferrerId(referrerId);
         }
+        finally {
+            referrerClient.endConnection();
+        }
 
         saveReferrerId(referrerId);
         onLaunchClient();
-
-        referrerClient.endConnection();
     }
 
     private void handleInstallResponseNotSupported() {

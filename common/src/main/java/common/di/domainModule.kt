@@ -10,29 +10,29 @@ import org.koin.dsl.module
 
 
 val domainModule = module {
-    single { provideAddServerListUseCase(get()) }
-    single { provideAddServerUseCase(get()) }
-    single { provideDeleteServerListUseCase(get()) }
-    single { provideFetchServerListUseCase(get()) }
-    single { provideGetServerListUseCase(get()) }
+    single { providesAddServerListUseCase(get()) }
+    single { providesAddServerUseCase(get()) }
+    single { providesDeleteServerListUseCase(get()) }
+    single { providesFetchServerListUseCase(get()) }
+    single { providesGetServerListUseCase(get()) }
 }
 
-fun provideAddServerListUseCase(vpnRepository: VpnRepository): AddServerListUseCase {
+fun providesAddServerListUseCase(vpnRepository: VpnRepository): AddServerListUseCase {
     return AddServerListUseCase(vpnRepository)
 }
 
-fun provideAddServerUseCase(vpnRepository: VpnRepository): AddServerUseCase {
+fun providesAddServerUseCase(vpnRepository: VpnRepository): AddServerUseCase {
     return AddServerUseCase(vpnRepository)
 }
 
-fun provideDeleteServerListUseCase(vpnRepository: VpnRepository): DeleteServerUseCase {
+fun providesDeleteServerListUseCase(vpnRepository: VpnRepository): DeleteServerUseCase {
     return DeleteServerUseCase(vpnRepository)
 }
 
-fun provideFetchServerListUseCase(vpnRepository: VpnRepository): FetchServerListUseCase {
+fun providesFetchServerListUseCase(vpnRepository: VpnRepository): FetchServerListUseCase {
     return FetchServerListUseCase(vpnRepository)
 }
 
-fun provideGetServerListUseCase(vpnRepository: VpnRepository): GetServerListUseCase {
+fun providesGetServerListUseCase(vpnRepository: VpnRepository): GetServerListUseCase {
     return GetServerListUseCase(vpnRepository)
 }

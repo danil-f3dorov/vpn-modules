@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityHomeBinding
-
 import common.activity.VpnActivity
 import common.util.timer.UpdateServerListTimer
 import common.viewmodel.HomeViewModel

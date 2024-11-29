@@ -24,13 +24,9 @@ import com.common.R
 import common.App
 import common.App.Companion.duntaManager
 import common.callback.SocketCallbackImpl
-import common.data.remote.client.RetrofitClient
 import common.domain.model.Server
-import common.model.ServerParcelable
 import common.util.enum.HomeScreenState
-import common.util.extensions.toParcelable
 import common.util.parse.ParseSpeed.parseSpeed
-import common.util.timer.VpnConnectionTimer
 import de.blinkt.openvpn.core.ConfigParser
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.ProfileManager
@@ -49,7 +45,6 @@ import java.lang.ref.WeakReference
 
 const val REQUEST_CODE = 919
 
-
 class HomeViewModel : ViewModel() {
     private val appContext = App.instance
     val screenStateLiveData = MutableStateFlow(HomeScreenState.Disconnected)
@@ -58,7 +53,6 @@ class HomeViewModel : ViewModel() {
     var vpnService: WeakReference<OpenVPNService>? = null
     var currentServer: Server? = null
     private var vpnProfile: VpnProfile? = null
-    var api = RetrofitClient.fetchServerListApi
 
     val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -103,7 +97,6 @@ class HomeViewModel : ViewModel() {
     }
 
     fun stopVpn() {
-        VpnConnectionTimer.stopTimer()
         ProfileManager.setConntectedVpnProfileDisconnected(appContext)
         vpnService?.get()?.management?.stopVPN(false)
     }
@@ -159,7 +152,7 @@ class HomeViewModel : ViewModel() {
         val intent = Intent(homeActivity, homeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-        intent.putExtra(ServerParcelable::class.java.canonicalName, currentServer!!.toParcelable())
+        intent.putExtra(Server::class.java.canonicalName, currentServer!!)
 
         val pendingIntent = PendingIntent.getActivity(
             homeActivity,
@@ -169,9 +162,11 @@ class HomeViewModel : ViewModel() {
         )
 
         val notification =
-            NotificationCompat.Builder(homeActivity, "1").setSmallIcon(R.drawable.sphere_small)
+            NotificationCompat.Builder(homeActivity, "1")
+                .setSmallIcon(R.drawable.sphere_small)
                 .setContentTitle("VPN is connected")
-                .setContentText("Connected to $countryName\n$speed").setContentIntent(pendingIntent)
+                .setContentText("Connected to $countryName\n$speed")
+                .setContentIntent(pendingIntent)
                 .build()
 
         val notificationManagerCompat = NotificationManagerCompat.from(homeActivity)
@@ -190,6 +185,7 @@ class HomeViewModel : ViewModel() {
     companion object {
         fun initDuntaSDK() {
             duntaManager.setPartnerId(1)
+//            DuntaService.notification =
             duntaManager.setApplicationId(getApplicationId())
             duntaManager.start(App.instance)
         }

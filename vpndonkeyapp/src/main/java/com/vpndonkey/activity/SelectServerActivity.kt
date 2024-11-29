@@ -10,10 +10,7 @@ import com.vpndonkey.adapter.ServerListRecyclerAdapter
 import com.vpndonkey.databinding.ActivityServerListBinding
 import common.domain.model.Server
 import common.domain.usecase.GetServerListUseCase
-import common.model.ServerParcelable
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.util.extensions.toParcelable
-import common.util.extensions.toServer
 import common.viewmodel.HomeViewModel
 import org.koin.java.KoinJavaComponent.inject
 
@@ -37,14 +34,14 @@ class SelectServerActivity : AppCompatActivity() {
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val selectedServer = result.data?.getParcelableExtra("selectedServer") as ServerParcelable?
-                startHomeActivity(selectedServer?.toServer())
+                val selectedServer = result.data?.getParcelableExtra("selectedServer") as Server?
+                startHomeActivity(selectedServer)
             }
         }
 
     private fun startHomeActivity(selectedServer: Server?) {
         val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra("selectedServer", selectedServer?.toParcelable())
+        intent.putExtra("selectedServer", selectedServer)
         viewModel.stopVpn()
         intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivityIfNetworkIsAvailable(intent, NoInternetConnectionActivity::class.java)

@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdk = 24
         targetSdk = 34
-        versionCode = 15
-        versionName = "2.4"
+        versionCode = 20
+        versionName = "3.0.1"
         setProperty("archivesBaseName", "vpnduck-$versionName")
     }
 
@@ -23,11 +23,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
     buildTypes {
         release {
-            isShrinkResources = true
-            isMinifyEnabled = true
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
+            isShrinkResources = false
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -47,9 +49,7 @@ android {
             useLegacyPackaging = true
         }
     }
-
-    namespace = "com.vpnduck"
-}
+    namespace = "com.vpnduck"}
 
 dependencies {
     implementation(project(":common"))

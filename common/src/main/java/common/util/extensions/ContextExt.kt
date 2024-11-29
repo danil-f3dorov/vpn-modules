@@ -3,6 +3,7 @@ package common.util.extensions
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 
 

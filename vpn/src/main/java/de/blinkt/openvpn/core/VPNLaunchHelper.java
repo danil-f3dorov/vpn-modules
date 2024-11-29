@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import openvpn.R;
 
@@ -130,10 +132,24 @@ public class VPNLaunchHelper {
     }
 
 
-    public static void startOpenVpn(VpnProfile startprofile, Context context) {
-        Intent startVPN = startprofile.prepareStartService(context);
-        if (startVPN != null)
-            context.startService(startVPN);
+    public static void startOpenVpn(final VpnProfile startprofile, final Context context) {
+        // Создаем ExecutorService для выполнения задачи в фоновом потоке
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        // Отправляем задачу на выполнение в фоновом потоке
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                // Этот код выполняется в фоновом потоке
+                Intent startVPN = startprofile.prepareStartService(context);
+                if (startVPN != null) {
+                    context.startService(startVPN);
+                }
+            }
+        });
+
+        // Закрываем executor, когда он больше не нужен
+        executor.shutdown();
     }
 
     public static String getConfigFilePath(Context context) {

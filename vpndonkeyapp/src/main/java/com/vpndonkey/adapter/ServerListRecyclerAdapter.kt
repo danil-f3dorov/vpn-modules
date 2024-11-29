@@ -13,7 +13,6 @@ import com.vpndonkey.activity.SelectServerActivity
 import com.vpndonkey.databinding.ItemServerBinding
 import common.domain.model.Server
 import common.domain.usecase.GetServerListUseCase
-import common.util.extensions.toParcelable
 import common.util.parse.ParseFlag.findFlagForServer
 import common.util.parse.ParseSpeed.convertSpeedForAdapter
 import common.util.validate.ValidateUtil.validateIfCityExist
@@ -66,7 +65,7 @@ class ServerListRecyclerAdapter(
                 (root.context, findFlagForServer(server)))
             root.setOnClickListener {
                 val intent = Intent(itemView.context, HomeActivity::class.java)
-                intent.putExtra(Server::class.java.canonicalName, server.toParcelable())
+                intent.putExtra(Server::class.java.canonicalName, server)
                 activity.requestPermissionLauncher.launch(intent)
             }
         }

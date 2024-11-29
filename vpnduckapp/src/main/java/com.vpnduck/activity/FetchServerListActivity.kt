@@ -3,27 +3,27 @@ package com.vpnduck.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.vpnduck.R
 import com.vpnduck.databinding.ActivityLoaderBinding
 import common.domain.model.Server
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.util.extensions.toParcelable
 import common.viewmodel.FetchServerListViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class FetchServerListActivity : AppCompatActivity() {
 
     private var _binding: ActivityLoaderBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<FetchServerListViewModel>()
+    private val viewModel by viewModel<FetchServerListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityLoaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         startAnimation()
-        viewModel.fetchServerList(::retry, ::navigateToActivity)
+        viewModel.fetchServerList(this, ::retry, ::navigateToActivity)
     }
 
     private fun retry() {
@@ -37,10 +37,9 @@ class FetchServerListActivity : AppCompatActivity() {
             if (intent.hasExtra("homeCall")) {
                 Intent(this, SelectServerActivity::class.java)
             } else {
-                val parcelableServer = server.toParcelable()
-                println(parcelableServer)
+                println(server)
                 Intent(this, HomeActivity::class.java).apply {
-                    putExtra(Server::class.java.canonicalName, parcelableServer)
+                    putExtra(Server::class.java.canonicalName, server)
                 }
             }
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)

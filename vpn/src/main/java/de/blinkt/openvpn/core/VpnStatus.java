@@ -28,7 +28,7 @@ public class VpnStatus {
 
     private static String mLaststatemsg = "";
 
-    private static String mLaststate = "NOPROCESS";
+    private static String mLaststate = "NO_PROCESS";
 
     private static int mLastStateresid = R.string.state_noprocess;
 
@@ -87,7 +87,7 @@ public class VpnStatus {
             message = message.substring(0, message.length() - 1);
 
         String status = mLaststate;
-        if (status.equals("NOPROCESS"))
+        if (status.equals("NO_PROCESS"))
             return message;
 
         if (mLastStateresid == R.string.state_waitconnectretry) {

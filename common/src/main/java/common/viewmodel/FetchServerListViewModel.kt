@@ -1,6 +1,7 @@
 package common.viewmodel
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.fasterxml.jackson.databind.ObjectMapper
 import common.App
@@ -12,56 +13,71 @@ import common.domain.usecase.DeleteServerUseCase
 import common.domain.usecase.FetchServerListUseCase
 import common.domain.usecase.GetServerListUseCase
 import common.util.PrefDao
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.brotli.dec.BrotliInputStream
-import org.koin.java.KoinJavaComponent.inject
 import java.io.ByteArrayInputStream
 
 class FetchServerListViewModel(
+    private val fetchServerListUseCase: FetchServerListUseCase,
+    private val getServerListUseCase: GetServerListUseCase,
+    private val addServerListUseCase: AddServerListUseCase,
+    private val addServerUseCase: AddServerUseCase,
+    private val deleteServerUseCase: DeleteServerUseCase
 ) : ViewModel() {
+
     private val prefDao = PrefDao(App.instance)
-    private val fetchServerListUseCase: FetchServerListUseCase by inject(FetchServerListUseCase::class.java)
-    private val getServerListUseCase: GetServerListUseCase by inject(GetServerListUseCase::class.java)
-    private val addServerListUseCase: AddServerListUseCase by inject(AddServerListUseCase::class.java)
-    private val addServerUseCase: AddServerUseCase by inject(AddServerUseCase::class.java)
-    private val deleteServerUseCase: DeleteServerUseCase by inject(DeleteServerUseCase::class.java)
 
-    fun fetchServerList(retry: () -> Unit, navigateToActivity: (server: Server) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val listVersion = prefDao.getVersion()
-                val response = fetchServerListUseCase.execute(listVersion)
-                Log.i("response", response.isSuccessful.toString())
+    fun fetchServerList(context: Context, retry: () -> Unit, navigateToActivity: (server: Server) -> Unit) {
+        CoroutineScope(Dispatchers.IO + CoroutineName("Денчик")).launch {
+            val listVersion = prefDao.getVersion()
+            val result = fetchServerListUseCase.execute(listVersion)
 
-                if (response.isSuccessful) {
-                    response.body()?.byteStream()?.use { byteStream ->
-                        BrotliInputStream(byteStream).use { brotliInputStream ->
-                            val byteData = brotliInputStream.readBytes()
-                            val inputStream = ByteArrayInputStream(byteData)
-                            val objectMapper = ObjectMapper()
-                            val fetchServersResponse = objectMapper.readValue(
-                                inputStream, FetchServerListResponse::class.java
-                            )
-                            setCurrentServer(
-                                fetchServersResponse.server, retry, navigateToActivity
-                            )
-                            val serverListVersion = fetchServersResponse.version?.toInt()
-                            saveServerList(
-                                fetchServersResponse.server, listVersion, serverListVersion
-                            )
+            result.fold(
+                onSuccess = { response ->
+                    if (response.isSuccessful) {
+                        response.body()?.byteStream()?.use { byteStream ->
+                            BrotliInputStream(byteStream).use { brotliInputStream ->
+                                val byteData = brotliInputStream.readBytes()
+                                val inputStream = ByteArrayInputStream(byteData)
+                                val objectMapper = ObjectMapper()
+                                val fetchServersResponse = objectMapper.readValue(
+                                    inputStream, FetchServerListResponse::class.java
+                                )
+                                setCurrentServer(
+                                    fetchServersResponse.server, retry, navigateToActivity
+                                )
+                                val serverListVersion = fetchServersResponse.version?.toInt()
+                                saveServerList(
+                                    fetchServersResponse.server, listVersion, serverListVersion
+                                )
+                            }
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "Server error: ${response.code()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            retry()
                         }
                     }
-                } else {
-                    withContext(Dispatchers.Main) { retry() }
+                },
+                onFailure = { throwable ->
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            throwable.message ?: "Network error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        retry()
+                    }
                 }
-            } catch (e: Exception) {
-                Log.i("response", e.message.toString())
-                withContext(Dispatchers.Main) { retry() }
-            }
-
+            )
         }
     }
 
