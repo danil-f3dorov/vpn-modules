@@ -5,6 +5,7 @@ import static com.progun.dunta_sdk.utils.LogWrap.i;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -37,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
@@ -84,7 +86,6 @@ interface ClientStarter {
 public class DuntaService extends Service implements ClientStarter {
 
     private AtomicInteger relaunchAfterCrashCounter = new AtomicInteger(0);
-    public static Notification notification;
     private final int RELAUNCH_CRASH_COUNT = 5;
     static public final String ACTION_SINGLE_WORKER = "ACTION_SINGLE_WORKER";
     static public final String ACTION_REPEATED_WORKER = "ACTION_REPEATED_WORKER";
@@ -261,11 +262,11 @@ public class DuntaService extends Service implements ClientStarter {
                         capabilities = connectivityManager.getNetworkCapabilities(network);
                     } catch (SecurityException e) {
                         /*
-                        * костыль #1, из за предположительно непофикшенного в s андроиде issue
-                        * links:
-                        * https://stackoverflow.com/questions/66652819/getting-security-exception-while-trying-to-fetch-networkcapabilities-on-android
-                        * https://github.com/flurry/flurry-android-sdk/issues/17
-                        * */
+                         * костыль #1, из за предположительно непофикшенного в s андроиде issue
+                         * links:
+                         * https://stackoverflow.com/questions/66652819/getting-security-exception-while-trying-to-fetch-networkcapabilities-on-android
+                         * https://github.com/flurry/flurry-android-sdk/issues/17
+                         * */
                         String msg = "Package android does not belong to";
                         if (!e.getMessage().contains(msg)) throw e;
                     }
@@ -715,8 +716,8 @@ public class DuntaService extends Service implements ClientStarter {
 
         changeServiceRunningState(true);
 
-        if (ProxyClient.DEBUG && ProtocolConstants.ENABLE_GRAB_LOGCAT)
-            grabLogcat();
+//        if (ProxyClient.DEBUG && ProtocolConstants.ENABLE_GRAB_LOGCAT)
+//            grabLogcat();
 
         deviceInfo = getFullDeviceInfo();
         jsonInitChecker = new JsonServerInitChecker(this);
@@ -733,49 +734,24 @@ public class DuntaService extends Service implements ClientStarter {
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String notificationContentText =
-                    getSharedPreferences(
-                            ApiConst.PARTNER_INFO.PREFS.FILE_NAME,
-                            Context.MODE_PRIVATE
-                    )
-                            .getString(
-                                    ApiConst.PARTNER_INFO.PREFS.FIELDS.NOTIFICATION_CONTENT,
-                                    "notificationContent"
-                            );
+        Notification notification =
+                createNotification(notificationIconId, notificationContent, notificationTitle);
 
-            String notificationTitleText =
-                    getSharedPreferences(
-                            ApiConst.PARTNER_INFO.PREFS.FILE_NAME,
-                            Context.MODE_PRIVATE
-                    )
-                            .getString(
-                                    ApiConst.PARTNER_INFO.PREFS.FIELDS.NOTIFICATION_TITLE,
-                                    "notificationTitle"
-                            );
+        startForegroundWithApiVersion(notification);
+    }
 
-            if (!notificationContentText.equals(notificationContent))
-                notificationContent = notificationContentText;
 
-            if (!notificationTitleText.equals(notificationTitle))
-                notificationTitle = notificationTitleText;
-
+    private void startForegroundWithApiVersion(Notification notification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            try {
+                startForeground(START_FOREGROUND_ID, notification);
+            } catch (ForegroundServiceStartNotAllowedException e) {
+                LogWrap.e(TAG, "Start service from foreground has restricted");
+            }
+        } else {
             startForeground(START_FOREGROUND_ID, notification);
         }
     }
-
-//    private void startForegroundWithApiVersion(Notification notification) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-//            try {
-//                startForeground(START_FOREGROUND_ID, notification);
-//            } catch (ForegroundServiceStartNotAllowedException e) {
-//                // Ошибка которая будет вылезать, когда на АПМ 31+ сервис будет запускаться из фона, когда приложеие не открыто.
-//                LogWrap.e(TAG, "Start service from foreground has restricted");
-//            }
-//        } else {
-//            startForeground(START_FOREGROUND_ID, notification);
-//        }
-//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -1278,12 +1254,10 @@ public class DuntaService extends Service implements ClientStarter {
             referrerId = ReferrerConsts.MARKS.RESPONSE_PARSE_ERROR;
             LogWrap.e(TAG, "parse referrer response exception, data=" +
                     parsedIdFromUrl + " changed to=" + referrerId);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             referrerId = ReferrerConsts.MARKS.RESPONSE_PARSE_ERROR;
             saveReferrerId(referrerId);
-        }
-        finally {
+        } finally {
             referrerClient.endConnection();
         }
 

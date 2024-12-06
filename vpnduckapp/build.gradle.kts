@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdk = 24
         targetSdk = 34
-        versionCode = 20
-        versionName = "3.0.1"
+        versionCode = 22
+        versionName = "3.0.2"
         setProperty("archivesBaseName", "vpnduck-$versionName")
     }
 
@@ -42,6 +42,11 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 
     packagingOptions {
@@ -55,10 +60,18 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":domain"))
 
-    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation(libs.koin.android)
+    implementation("androidx.compose.material:material:1.7.5")
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
 
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity.ktx)
     implementation(libs.constraintlayout)
+    debugImplementation(libs.androidx.ui.tooling)
 }

@@ -22,7 +22,7 @@ class FetchServerListActivity : AppCompatActivity() {
         _binding = ActivityLoaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         startAnimation()
-        viewModel.fetchServerList(::retry, ::navigateToActivity)
+        viewModel.fetchServerList(this, ::retry, ::navigateToActivity)
     }
 
     private fun retry() {

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="vpnduckapp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-08-30T10:16:50.533021500Z">
+        <DropdownSelection timestamp="2024-12-03T06:31:32.329312800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Andrey\.android\avd\Nexus_S_API_26.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Andrey\.android\avd\smol.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -17,6 +17,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="common">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ToggleButtonPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
