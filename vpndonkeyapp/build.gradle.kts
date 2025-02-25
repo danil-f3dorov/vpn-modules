@@ -54,8 +54,6 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":domain"))
 
-    implementation(libs.koin.android)
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity.ktx)

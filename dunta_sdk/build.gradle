@@ -15,7 +15,7 @@ ext {
     PROD_SDK_RELEASE_VER_VALUE = "5"
 
     GPLAY_SDK_RELEASE_VER_NAME = "GPLAY_SDK_RELEASE_VER"
-    GPLAY_SDK_RELEASE_VER_VALUE = "41"
+    GPLAY_SDK_RELEASE_VER_VALUE = "42"
 }
 android {
     namespace 'com.progun.dunta_sdk'

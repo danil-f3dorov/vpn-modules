@@ -8,14 +8,14 @@ import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityHomeBinding
 import common.activity.VpnActivity
 import common.util.timer.UpdateServerListTimer
-import common.viewmodel.HomeViewModel
+import common.viewmodel.MainViewModel
 
 
 class HomeActivity : VpnActivity() {
 
     private var _binding: ActivityHomeBinding? = null
     private val binding get() = _binding!!
-    override val vm by viewModels<HomeViewModel>()
+    override val vm by viewModels<MainViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

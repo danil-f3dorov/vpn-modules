@@ -8,13 +8,13 @@ import com.vpnduck.R
 import com.vpnduck.databinding.ActivityHomeBinding
 import common.activity.VpnActivity
 import common.util.timer.UpdateServerListTimer
-import common.viewmodel.HomeViewModel
+import common.viewmodel.MainViewModel
 
-class HomeActivity : VpnActivity() {
+class HomeActivity : VpnActivity3() {
 
     private var _binding: ActivityHomeBinding? = null
     private val binding get() = _binding!!
-    override val vm by viewModels<HomeViewModel>()
+    override val vm by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)

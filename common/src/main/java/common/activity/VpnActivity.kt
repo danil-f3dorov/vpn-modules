@@ -1,355 +1,117 @@
 package common.activity
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.net.VpnService
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.animation.AnimationUtils
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.os.IBinder
+import android.util.Base64
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.viewModelScope
-import com.common.R
-import common.dialog.VpnDisconnectDialog
+import common.App
+import common.App.Companion.duntaManager
+import common.callback.SocketCallbackImpl
 import common.domain.model.Server
 import common.util.enum.HomeScreenState
-import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.util.parse.ParseFlag
-import common.util.timer.UpdateServerListTimer
-import common.util.timer.VpnConnectionTimer
-import common.util.validate.ValidateUtil
-import common.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import common.viewmodel.MainViewModel
+import common.viewmodel.MainViewModel.Companion.initDuntaSDK
+import de.blinkt.openvpn.core.ConfigParser
+import de.blinkt.openvpn.core.OpenVPNService
+import de.blinkt.openvpn.core.ProfileManager
+import de.blinkt.openvpn.core.VPNLaunchHelper
+import de.blinkt.openvpn.core.VpnProfile
+import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
+import java.lang.ref.WeakReference
 
-abstract class VpnActivity : AppCompatActivity() {
+open class VpnActivity : ComponentActivity() {
+    protected lateinit var mainViewModel: MainViewModel
 
-    abstract val vm: HomeViewModel
-    private var isConnected = false
-    private val vpnTimer = VpnConnectionTimer()
+    private var isServiceBind = false
+    private var vpnService: WeakReference<OpenVPNService>? = null
+    private var vpnProfile: VpnProfile? = null
+
+
+    val connection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as OpenVPNService.LocalBinder
+            vpnService = WeakReference(binder.service)
+            vpnService?.get()?.let {
+                duntaManager.setSocketCallback(SocketCallbackImpl(it))
+                initDuntaSDK()
+            }
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            vpnService = null
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setCurrentServer()
+        (applicationContext as App).appComponent.inject(this)
+        mainViewModel =
+            (applicationContext as App).appComponent.factory.create(MainViewModel::class.java)
     }
 
-    private fun startVpn() {
-        val intent = VpnService.prepare(this)
-        if (intent != null) {
-            requestPermissionLauncher.launch(intent)
-        } else {
-            vm.startVpn(baseContext)
-            vm.screenStateLiveData.value = HomeScreenState.Connecting
-        }
-    }
-
-    private val requestPermissionLauncher =
+    protected val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                vm.screenStateLiveData.value = HomeScreenState.Connecting
-                vm.startVpn(baseContext)
+                VPNLaunchHelper.startOpenVpn(vpnProfile, App.instance)
+                mainViewModel.screenState.value = HomeScreenState.Connecting
             } else {
-                startVpn()
+
             }
         }
 
-    fun updateUiCurrentServer(
-        tvCountryName: TextView,
-        tvIpAddress: TextView,
-        ivCountryIcon: ImageView
-
-    ) {
-        val srv = vm.currentServer
-        tvCountryName.text = ValidateUtil.validateIfCityExist(
-            srv?.country ?: "Unknown", srv?.city ?: ""
-        )
-        tvIpAddress.text = srv?.ip ?: "000.000.000.001"
-        ivCountryIcon.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this, ParseFlag.findFlagForServer(srv)
-            )
-        )
-    }
-
-    private fun setCurrentServer() {
-        val extraServer = intent.getParcelableExtra<Server>(Server::class.java.canonicalName)
-        if (extraServer != null) {
-            vm.currentServer = extraServer
-        }
-    }
-
-    fun observeScreenStateFlow(
-        tvDownloadSpeed: TextView,
-        tvUploadSpeed: TextView,
-        ivButtonBackground: ImageView,
-        ibConnect: ImageButton,
-        layoutId: Int,
-        cancelButtonId: Int,
-        disconnectButtonId: Int,
-        ibDisconnect: Int,
-        tvStatusInfo: TextView,
-        ibConnectId: Int
-    ) {
-        vm.viewModelScope.launch(Dispatchers.Main) {
-            vm.screenStateLiveData.collect { state ->
-                when (state) {
-                    HomeScreenState.Connected -> updateUiConnected(
-                        layoutId = layoutId,
-                        disconnectButtonId = disconnectButtonId,
-                        cancelButtonId = cancelButtonId,
-                        ivButtonBackground = ivButtonBackground,
-                        ibConnect = ibConnect,
-                        tvDownloadSpeed = tvDownloadSpeed,
-                        tvUploadSpeed = tvUploadSpeed,
-                        ibDisconnect = ibDisconnect,
-                        tvStatusInfo = tvStatusInfo
-                    )
-
-                    HomeScreenState.Disconnected -> updateUiDisconnected(
-                        ivButtonBackground = ivButtonBackground,
-                        ibConnect = ibConnect,
-                        tvDownloadSpeed = tvDownloadSpeed,
-                        tvUploadSpeed = tvUploadSpeed,
-                        tvStatusInfo = tvStatusInfo,
-                        ibConnectId = ibConnectId
-                    )
-
-                    HomeScreenState.Connecting -> updateUiConnecting(
-                        tvStatusInfo = tvStatusInfo,
-                        ivButtonBackground = ivButtonBackground,
-                        ibConnect = ibConnect
-                    )
-
-                    null -> {}
-                }
+    fun startVpn(currSrv: Server, requestPermissionLauncher: ActivityResultLauncher<Intent>) {
+        if (loadVpnProfile(currSrv)) {
+            val intent = VpnService.prepare(App.instance)
+            if (intent != null) {
+                requestPermissionLauncher.launch(intent)
+            } else {
+                VPNLaunchHelper.startOpenVpn(vpnProfile, App.instance)
+                mainViewModel.screenState.value = HomeScreenState.Connecting
             }
         }
     }
 
-    private fun updateUiDisconnected(
-        ivButtonBackground: ImageView,
-        ibConnect: ImageButton,
-        tvStatusInfo: TextView,
-        tvDownloadSpeed: TextView,
-        tvUploadSpeed: TextView,
-        ibConnectId: Int
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getSystemService(android.app.NotificationManager::class.java).deleteNotificationChannel(
-                "1"
-            )
-        }
-        ivButtonBackground.clearAnimation()
-        isConnected = false
-        ibConnect.visibility = View.VISIBLE
-        ibConnect.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this@VpnActivity, ibConnectId
-            )
-        )
-        tvStatusInfo.text = "Click to Connect"
-        tvDownloadSpeed.text = "--"
-        tvUploadSpeed.text = "--"
-        onClickStartConnect(
-            ibConnect = ibConnect,
-            ivButtonBackground = ivButtonBackground
-        )
-    }
-
-    private fun updateUiConnecting(
-        ivButtonBackground: ImageView,
-        tvStatusInfo: TextView,
-        ibConnect: ImageButton
-    ) {
-        val rotateAnimation = AnimationUtils.loadAnimation(this@VpnActivity, R.anim.rotate_anim)
-        ivButtonBackground.startAnimation(rotateAnimation)
-        tvStatusInfo.text = "Connecting..."
-        ibConnect.visibility = View.GONE
-    }
-
-    private fun updateUiConnected(
-        tvStatusInfo: TextView,
-        tvDownloadSpeed: TextView,
-        tvUploadSpeed: TextView,
-        ivButtonBackground: ImageView,
-        ibConnect: ImageButton,
-        layoutId: Int,
-        cancelButtonId: Int,
-        disconnectButtonId: Int,
-        ibDisconnect: Int
-    ) {
-        vpnTimer.startTimer { tvStatusInfo.text = it }
-        vm.observeTraffic(tvDownloadSpeed, tvUploadSpeed, this@VpnActivity)
-        ivButtonBackground.clearAnimation()
-        ibConnect.setImageDrawable(
-            AppCompatResources.getDrawable(this@VpnActivity, ibDisconnect)
-        )
-        ibConnect.visibility = View.VISIBLE
-        onClickStopConnect(
-            layoutId = layoutId,
-            disconnectButtonId = disconnectButtonId,
-            cancelButtonId = cancelButtonId,
-            ivButtonBackground = ivButtonBackground,
-            ibConnect = ibConnect
-        )
-    }
-
-    private fun onClickStartConnect(
-        ivButtonBackground: ImageView,
-        ibConnect: ImageButton
-    ) {
-        ivButtonBackground.setOnClickListener(startConnectClickListener())
-        ibConnect.setOnClickListener(startConnectClickListener())
-    }
-
-    private fun onClickStopConnect(
-        ivButtonBackground: ImageView,
-        ibConnect: ImageButton,
-        layoutId: Int,
-        cancelButtonId: Int,
-        disconnectButtonId: Int
-    ) {
-        ivButtonBackground.setOnClickListener(
-            stopConnectClickListener(
-                layoutId = layoutId,
-                disconnectButtonId = disconnectButtonId,
-                cancelButtonId = cancelButtonId
-
-            )
-        )
-        ibConnect.setOnClickListener(
-            stopConnectClickListener(
-                layoutId = layoutId,
-                disconnectButtonId = disconnectButtonId,
-                cancelButtonId = cancelButtonId
-            )
-        )
-    }
-
-    private fun stopConnectClickListener(
-        layoutId: Int,
-        cancelButtonId: Int,
-        disconnectButtonId: Int
-    ) = View.OnClickListener {
-        VpnDisconnectDialog(
-            context = this,
-            layoutId = layoutId,
-            disconnectButtonId = disconnectButtonId,
-            cancelButtonId = cancelButtonId
-        ) {
-            vm.screenStateLiveData.value = HomeScreenState.Disconnected
-            vpnTimer.stopTimer()
-            vm.stopVpn()
-        }.show()
-    }
-
-    private fun startConnectClickListener() = View.OnClickListener {
-        if (vm.loadVpnProfile()) {
-            startVpn()
-            it.setOnClickListener(null)
+    private fun loadVpnProfile(currentServer: Server): Boolean {
+        return try {
+            val data: ByteArray = Base64.decode(currentServer.configData, Base64.DEFAULT)
+            val cp = ConfigParser()
+            val isr = InputStreamReader(ByteArrayInputStream(data))
+            cp.parseConfig(isr)
+            vpnProfile = cp.convertProfile()
+            vpnProfile?.mName = currentServer.country
+            ProfileManager.getInstance(App.instance).addProfile(vpnProfile)
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 
-    fun serversOnClickListener(
-        placeholder1: View,
-        layoutId: Int,
-        cancelButtonId: Int,
-        disconnectButtonId: Int,
-        fetchServerListActivityClass: Class<out AppCompatActivity>,
-        selectServerActivity: Class<out AppCompatActivity>,
-        noInternetConnectionActivity: Class<out AppCompatActivity>,
-    ) {
-        placeholder1.setOnClickListener {
-            when (vm.screenStateLiveData.value) {
-                HomeScreenState.Connected -> {
-                    VpnDisconnectDialog(
-                        this@VpnActivity,
-                        layoutId = layoutId,
-                        cancelButtonId = cancelButtonId,
-                        disconnectButtonId = disconnectButtonId
-                    ) {
-                        vm.screenStateLiveData.value = HomeScreenState.Disconnected
-                        vpnTimer.stopTimer()
-                        vm.stopVpn()
-                        startSelectServerActivity(
-                            fetchServerListActivityClass = fetchServerListActivityClass,
-                            selectServerActivity = selectServerActivity,
-                            noInternetConnectionActivity = noInternetConnectionActivity
-                        )
-                    }.show()
-                }
-
-                HomeScreenState.Disconnected -> {
-                    startSelectServerActivity(
-                        fetchServerListActivityClass = fetchServerListActivityClass,
-                        selectServerActivity = selectServerActivity,
-                        noInternetConnectionActivity = noInternetConnectionActivity
-                    )
-                }
-
-                HomeScreenState.Connecting -> {
-                    Unit
-                }
-
-                null -> {}
-            }
-        }
+    fun stopVpn() {
+        ProfileManager.setConntectedVpnProfileDisconnected(App.instance)
+        vpnService?.get()?.management?.stopVPN(false)
     }
 
-    private fun startSelectServerActivity(
-        fetchServerListActivityClass: Class<out AppCompatActivity>,
-        selectServerActivity: Class<out AppCompatActivity>,
-        noInternetConnectionActivity: Class<out AppCompatActivity>
-    ) {
-        val intent: Intent?
-        if (UpdateServerListTimer.isTimePassed()) {
-            intent = Intent(this, fetchServerListActivityClass)
-            intent.putExtra("homeCall", true)
-        } else {
-            intent = Intent(this, selectServerActivity)
-        }
-        startActivityIfNetworkIsAvailable(intent, noInternetConnectionActivity)
-    }
 
     override fun onResume() {
         super.onResume()
-        vm.bindService(this)
+        val intent = Intent(this, OpenVPNService::class.java)
+        intent.setAction(OpenVPNService.START_SERVICE)
+        isServiceBind
+            this.bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
     override fun onPause() {
-        if (vm.isServiceBind) {
-            vm.isServiceBind = false
-            unbindService(vm.connection)
+        if (isServiceBind) {
+            isServiceBind = false
+            unbindService(connection)
         }
         super.onPause()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getSystemService(NotificationManager::class.java).deleteNotificationChannel("channel_id")
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        notificationChannel()
-    }
-
-    private fun notificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "channel_id"
-            val channelName = "Channel Name"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, channelName, importance)
-            val notificationManager = this.getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-        }
     }
 }

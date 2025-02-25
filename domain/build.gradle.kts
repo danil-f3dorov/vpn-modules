@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 android {
     namespace = "common.data"
@@ -29,6 +30,9 @@ android {
 }
 
 dependencies {
+    implementation("com.google.dagger:dagger:2.49")
+    ksp("com.google.dagger:dagger-compiler:2.49")
+
     implementation(libs.retrofit)
     implementation(libs.jackson.databind)
 }

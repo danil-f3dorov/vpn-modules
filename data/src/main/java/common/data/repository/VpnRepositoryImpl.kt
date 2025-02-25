@@ -9,8 +9,12 @@ import common.domain.model.Server
 import common.domain.repository.VpnRepository
 import okhttp3.ResponseBody
 import retrofit2.Response
+import javax.inject.Inject
 
-class VpnRepositoryImpl(private val serverDao: ServerDao, private val api: FetchServerListApi) : VpnRepository {
+class VpnRepositoryImpl @Inject constructor(
+    private val serverDao: ServerDao,
+    private val api: FetchServerListApi
+) : VpnRepository {
 
     override suspend fun addSererList(serverList: List<Server>) {
         serverDao.addServerList(serverList.map { it.toEntity() })

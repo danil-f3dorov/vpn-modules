@@ -27,9 +27,10 @@ dependencyResolutionManagement {
 
 }
 
-rootProject.name = "AnimalVpn"
+rootProject.name = "vpn-modules"
 include(":vpnduckapp")
 include(":vpndonkeyapp")
+include(":indianvpn")
 include(":common")
 include(":vpn")
 include(":dunta_sdk")

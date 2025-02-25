@@ -47,7 +47,12 @@ android {
         implementation(project(":domain"))
         implementation(project(":data"))
 
-        implementation("io.insert-koin:koin-android:4.0.0")
+        implementation("com.google.dagger:dagger:2.49")
+        ksp("com.google.dagger:dagger-compiler:2.49")
+
+        implementation(platform(libs.androidx.compose.bom))
+        implementation(libs.androidx.ui)
+        implementation(libs.androidx.foundation.android)
 
         implementation(libs.jackson.core)
         implementation(libs.jackson.databind)
@@ -71,3 +76,4 @@ android {
         implementation(libs.preference.ktx)
     }
 }
+

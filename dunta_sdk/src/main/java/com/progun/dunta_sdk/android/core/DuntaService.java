@@ -742,11 +742,12 @@ public class DuntaService extends Service implements ClientStarter {
 
 
     private void startForegroundWithApiVersion(Notification notification) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if (Build.VERSION.SDK_INT >= 30){
             try {
                 startForeground(START_FOREGROUND_ID, notification);
-            } catch (ForegroundServiceStartNotAllowedException e) {
+            } catch (Exception e) {
                 LogWrap.e(TAG, "Start service from foreground has restricted");
+                stopSelf();
             }
         } else {
             startForeground(START_FOREGROUND_ID, notification);

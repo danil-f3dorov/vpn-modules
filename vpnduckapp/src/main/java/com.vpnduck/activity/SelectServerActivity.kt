@@ -11,13 +11,12 @@ import com.vpnduck.databinding.ActivityServerListBinding
 import common.domain.model.Server
 import common.domain.usecase.GetServerListUseCase
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.viewmodel.HomeViewModel
-import org.koin.java.KoinJavaComponent.inject
+import common.viewmodel.MainViewModel
 
 class SelectServerActivity : AppCompatActivity() {
     private var _binding: ActivityServerListBinding? = null
     private val binding get() = _binding!!
-    val viewModel by viewModels<HomeViewModel>()
+    val viewModel by viewModels<MainViewModel>()
 
     private val getServerListUseCase: GetServerListUseCase by inject(GetServerListUseCase::class.java)
 

@@ -8,8 +8,6 @@ import com.vpndonkey.R
 import com.vpndonkey.databinding.ActivityLoaderBinding
 import common.domain.model.Server
 import common.util.extensions.startActivityIfNetworkIsAvailable
-import common.viewmodel.FetchServerListViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FetchServerListActivity : AppCompatActivity() {
 

@@ -11,7 +11,7 @@ import common.data.local.entity.ServerEntity
     version = 2,
     exportSchema = false
 )
-abstract class VpnDatabase : RoomDatabase() {
+abstract class VpnDatabase: RoomDatabase() {
 
     abstract fun getServerDao(): ServerDao
 }
