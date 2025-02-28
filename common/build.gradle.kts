@@ -34,6 +34,13 @@ android {
         jvmTarget = "17"
     }
 
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
@@ -47,21 +54,31 @@ android {
         implementation(project(":domain"))
         implementation(project(":data"))
 
-        implementation("com.google.dagger:dagger:2.49")
-        ksp("com.google.dagger:dagger-compiler:2.49")
+        implementation(libs.dagger)
+        ksp(libs.dagger.compiler)
 
+        implementation(libs.navigation.compose)
+        implementation(libs.kotlinx.serialization.json)
+
+        implementation(libs.androidx.core.ktx)
+        implementation(libs.androidx.lifecycle.runtime.ktx)
+        implementation(libs.androidx.activity.compose)
         implementation(platform(libs.androidx.compose.bom))
         implementation(libs.androidx.ui)
-        implementation(libs.androidx.foundation.android)
+        implementation(libs.androidx.ui.graphics)
+        implementation(libs.androidx.ui.tooling.preview)
+        implementation(libs.androidx.material3)
+        testImplementation(libs.junit)
+        androidTestImplementation(libs.androidx.junit)
+        androidTestImplementation(libs.androidx.espresso.core)
+        androidTestImplementation(platform(libs.androidx.compose.bom))
+        androidTestImplementation(libs.androidx.ui.test.junit4)
+        debugImplementation(libs.androidx.ui.tooling)
+        debugImplementation(libs.androidx.ui.test.manifest)
 
         implementation(libs.jackson.core)
         implementation(libs.jackson.databind)
         implementation(libs.brotli.dec)
-
-        implementation(libs.appcompat)
-        implementation(libs.material)
-        implementation(libs.activity.ktx)
-        implementation(libs.constraintlayout)
 
         implementation(libs.retrofit)
         implementation(libs.converter.gson)

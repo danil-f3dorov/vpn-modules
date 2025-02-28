@@ -1,5 +1,6 @@
 package common.activity
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -7,9 +8,11 @@ import android.net.VpnService
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Base64
+import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import common.App
 import common.App.Companion.duntaManager
 import common.callback.SocketCallbackImpl
@@ -22,6 +25,11 @@ import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnProfile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.lang.ref.WeakReference
@@ -32,7 +40,9 @@ open class VpnActivity : ComponentActivity() {
     private var isServiceBind = false
     private var vpnService: WeakReference<OpenVPNService>? = null
     private var vpnProfile: VpnProfile? = null
+    private var job: Job? = null
 
+    private var isVpnConnecting = false
 
     val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -42,6 +52,7 @@ open class VpnActivity : ComponentActivity() {
                 duntaManager.setSocketCallback(SocketCallbackImpl(it))
                 initDuntaSDK()
             }
+
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -54,26 +65,41 @@ open class VpnActivity : ComponentActivity() {
         (applicationContext as App).appComponent.inject(this)
         mainViewModel =
             (applicationContext as App).appComponent.factory.create(MainViewModel::class.java)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
     }
 
     protected val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                VPNLaunchHelper.startOpenVpn(vpnProfile, App.instance)
-                mainViewModel.screenState.value = HomeScreenState.Connecting
+                startVpnService()
             } else {
 
             }
         }
 
-    fun startVpn(currSrv: Server, requestPermissionLauncher: ActivityResultLauncher<Intent>) {
+    fun startVpn(currSrv: Server) {
         if (loadVpnProfile(currSrv)) {
             val intent = VpnService.prepare(App.instance)
             if (intent != null) {
                 requestPermissionLauncher.launch(intent)
             } else {
-                VPNLaunchHelper.startOpenVpn(vpnProfile, App.instance)
-                mainViewModel.screenState.value = HomeScreenState.Connecting
+                startVpnService()
+            }
+        }
+    }
+
+    private fun startVpnService() {
+        mainViewModel.observeTraffic(this)
+        isVpnConnecting = true
+        VPNLaunchHelper.startOpenVpn(vpnProfile, App.instance)
+        mainViewModel.screenState.value = HomeScreenState.Connecting
+        job = lifecycleScope.launch(Dispatchers.Main) {
+            delay(15_000)
+            if(mainViewModel.screenState.value != HomeScreenState.Connected && isVpnConnecting) {
+                Toast.makeText(this@VpnActivity, "This server is unavailable", Toast.LENGTH_SHORT).show()
+                mainViewModel.screenState.value = HomeScreenState.Disconnected
+                stopVpn()
+                this.cancel()
             }
         }
     }
@@ -94,6 +120,9 @@ open class VpnActivity : ComponentActivity() {
     }
 
     fun stopVpn() {
+        job?.cancel()
+        job = null
+        isVpnConnecting = false
         ProfileManager.setConntectedVpnProfileDisconnected(App.instance)
         vpnService?.get()?.management?.stopVPN(false)
     }

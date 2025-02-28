@@ -41,8 +41,8 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    implementation("com.google.dagger:dagger:2.49")
-    ksp("com.google.dagger:dagger-compiler:2.49")
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.appcompat)

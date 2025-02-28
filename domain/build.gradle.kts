@@ -30,8 +30,8 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.49")
-    ksp("com.google.dagger:dagger-compiler:2.49")
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.jackson.databind)

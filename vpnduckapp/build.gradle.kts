@@ -13,6 +13,9 @@ android {
         versionCode = 24
         versionName = "3.0.4"
         setProperty("archivesBaseName", "vpnduck-$versionName")
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     compileOptions {
@@ -42,21 +45,51 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
         }
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
-    namespace = "com.vpnduck"}
+    namespace = "com.vpnduck"
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+}
 
 dependencies {
     implementation(project(":common"))
     implementation(project(":domain"))
+    implementation(project(":data"))
 
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity.ktx)
-    implementation(libs.constraintlayout)
+
+    implementation(libs.navigation.compose)
+
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
+
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
+    implementation(libs.brotli.dec)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

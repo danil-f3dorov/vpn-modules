@@ -33,11 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -62,8 +62,8 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
 
-    implementation("com.google.dagger:dagger:2.49")
-    ksp("com.google.dagger:dagger-compiler:2.49")
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)

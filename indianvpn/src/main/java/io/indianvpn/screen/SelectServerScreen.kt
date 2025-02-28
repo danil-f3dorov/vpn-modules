@@ -43,7 +43,8 @@ fun SelectServerScreen(
     updateSrvList: () -> Unit,
     navHome:() -> Unit,
     backStack:() -> Unit,
-    setCurrentServer:(srv: Server) -> Unit
+    setCurrentServer:(srv: Server) -> Unit,
+    startVpn:() -> Unit
 ) {
 
     val srvList = remember { srvListFlow }.collectAsState()
@@ -132,6 +133,7 @@ fun SelectServerScreen(
                         onClick = {
                             setCurrentServer(server)
                             navHome()
+                            startVpn()
                         }
                     )
                 )
@@ -147,6 +149,7 @@ fun SelectServerScreen(
 private fun SelectServerScreenPreview() {
     SelectServerScreen(
         srvListFlow  = MutableStateFlow<List<Server>?>(null),
+        {},
         {},
         {},
         {},

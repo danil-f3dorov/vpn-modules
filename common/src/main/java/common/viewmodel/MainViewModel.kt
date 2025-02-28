@@ -7,8 +7,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -19,6 +17,7 @@ import com.common.R
 import com.fasterxml.jackson.databind.ObjectMapper
 import common.App
 import common.App.Companion.duntaManager
+import common.activity.VpnActivity
 import common.data.remote.model.FetchServerListResponse
 import common.domain.model.Server
 import common.domain.usecase.AddServerListUseCase
@@ -80,7 +79,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     private suspend fun handleVpnConnectionStatus(
         vpnStatus: VpnStatus.ConnectionState,
     ) = withContext(Dispatchers.Main) {
@@ -91,18 +89,14 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun observeTraffic(
-        tvDownloadSpeed: TextView, tvUploadSpeed: TextView, homeActivity: AppCompatActivity
-    ) {
+    fun observeTraffic(activity: VpnActivity) {
         viewModelScope.launch(Dispatchers.Default) {
             VpnTrafficObserver.downloadSpeed.combine(VpnTrafficObserver.uploadSpeed) { downloadSpeed, uploadSpeed ->
                 Pair(parseSpeed(downloadSpeed), parseSpeed(uploadSpeed))
             }.collect { (parsedDownloadSpeed, parsedUploadSpeed) ->
                 withContext(Dispatchers.Main) {
-                    tvDownloadSpeed.text = parsedDownloadSpeed
-                    tvUploadSpeed.text = parsedUploadSpeed
                     notification(
-                        "↑ $parsedDownloadSpeed kb/s ↓ $parsedUploadSpeed kb/s", homeActivity
+                        "↑ $parsedDownloadSpeed kb/s ↓ $parsedUploadSpeed kb/s", activity
                     )
                 }
             }
@@ -240,7 +234,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun notification(speed: String, homeActivity: AppCompatActivity) {
+    private fun notification(speed: String, homeActivity: VpnActivity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel =
                 NotificationChannel("1", "notification", NotificationManager.IMPORTANCE_LOW)

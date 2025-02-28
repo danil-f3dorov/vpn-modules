@@ -2,6 +2,7 @@ package common.di
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import common.di.annotations.ViewModelKey
 import common.viewmodel.MainViewModel
 import dagger.Binds
 import dagger.BindsInstance

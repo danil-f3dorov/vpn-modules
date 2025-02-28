@@ -2,7 +2,7 @@ package common.di
 
 import com.google.gson.GsonBuilder
 import common.data.remote.api.FetchServerListApi
-import common.di.qualifier.Test
+import common.di.annotations.Test
 import dagger.Module
 import dagger.Provides
 import okhttp3.Dns

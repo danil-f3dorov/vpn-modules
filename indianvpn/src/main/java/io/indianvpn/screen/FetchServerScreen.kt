@@ -11,16 +11,14 @@ import io.indianvpn.ui.theme.labelLarge
 
 @Composable
 fun FetchServerScreen(
-    modifier: Modifier = Modifier,
-    fetchServerList: (navHome: () -> Unit) -> Unit,
-    navigateHome: () -> Unit
+    fetchServerList: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        fetchServerList { navigateHome() }
+        fetchServerList()
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
