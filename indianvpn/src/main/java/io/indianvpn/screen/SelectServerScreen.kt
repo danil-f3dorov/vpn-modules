@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.indianvpn.R
-import common.domain.model.Server
-import common.util.parse.ParseFlag
-import common.util.ui.NoRippleInteractionSource
+import core.domain.model.Server
+import core.util.parse.ParseFlag
+import core.util.ui.NoRippleInteractionSource
 import io.indianvpn.compose.GradientButton
 import io.indianvpn.compose.VpnItemWithPing
 import io.indianvpn.ui.theme.Gilroy
@@ -127,7 +127,7 @@ fun SelectServerScreen(
                     imageId = ParseFlag.findFlagForServer(server),
                     country = server.country,
                     ip = server.ip,
-                    rowModifier = Modifier.clickable(
+                    modifier = Modifier.clickable(
                         interactionSource = NoRippleInteractionSource,
                         indication = null,
                         onClick = {

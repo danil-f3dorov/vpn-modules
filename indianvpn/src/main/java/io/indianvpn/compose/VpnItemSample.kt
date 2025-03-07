@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.common.R
+import com.core.R
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.textColor
 import io.indianvpn.ui.theme.textColor2
@@ -35,7 +35,7 @@ fun VpnItemSample(
     imageId: Int?,
     country: String?,
     ip: String?,
-    rowModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
 
@@ -43,7 +43,7 @@ fun VpnItemSample(
     val roundedCornerShape = RoundedCornerShape(24.dp)
 
     Row(
-        rowModifier
+        modifier
             .fillMaxWidth()
             .shadow(
                 elevation = 4.dp,

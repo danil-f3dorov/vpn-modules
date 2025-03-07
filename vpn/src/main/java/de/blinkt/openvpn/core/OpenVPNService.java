@@ -47,7 +47,7 @@ import observers.VpnTrafficObserver;
 import openvpn.R;
 
 public class OpenVPNService extends VpnService implements StateListener, Callback,
-        ByteCountListener{
+        ByteCountListener {
     public static final String START_SERVICE = "de.blinkt.openvpn.START_SERVICE";
     public static final String START_SERVICE_STICKY = "de.blinkt.openvpn.START_SERVICE_STICKY";
     public static final String ALWAYS_SHOW_NOTIFICATION =

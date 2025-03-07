@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import common.util.enum.HomeScreenState
-import common.util.ui.NoRippleInteractionSource
+import core.util.enum.ScreenState
+import core.util.ui.NoRippleInteractionSource
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.darkPeach
 import io.indianvpn.ui.theme.textColor2
@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ConnectButton(
-    screenState: HomeScreenState,
+    screenState: ScreenState,
     onClickConnect: () -> Unit,
     onClickStopVpn: () -> Unit
 ) {
@@ -38,7 +38,7 @@ fun ConnectButton(
     var connectingString by remember { mutableStateOf("Connecting") }
 
     when (screenState) {
-        HomeScreenState.Disconnected -> {
+        ScreenState.Disconnected -> {
             GradientButton(
                 onClick = onClickConnect
             ) {
@@ -50,7 +50,7 @@ fun ConnectButton(
                 )
             }
         }
-        HomeScreenState.Connected -> {
+        ScreenState.Connected -> {
             Box(
                 modifier = Modifier
                     .height(90.dp)
@@ -72,7 +72,7 @@ fun ConnectButton(
                 )
             }
         }
-        HomeScreenState.Connecting -> {
+        ScreenState.Connecting -> {
             LaunchedEffect(Unit) {
                 var dots = 0
                 while (true) {

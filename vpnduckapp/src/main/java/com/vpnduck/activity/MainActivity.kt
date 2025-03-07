@@ -1,11 +1,11 @@
 package com.vpnduck.activity
 
 import android.os.Bundle
+import android.view.View
+import android.view.View.OnClickListener
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import com.vpnduck.activity.ui.theme.VpnDuckTheme
-import common.activity.VpnActivity
-import common.nav.VpnNavigation
 
 class MainActivity : VpnActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +15,14 @@ class MainActivity : VpnActivity() {
                 VpnNavigation(
                     mainViewModel = mainViewModel,
                     navController = rememberNavController(),
-                    screens = ,
+                    screens = NavigationScreens(
+                        fetchServerScreen = { params -> {
+                            FetchServerScreen(params)
+                        }
+
+                        },
+
+                    ),
                     startVpn = {
                         startVpn(it)
                     },
@@ -28,3 +35,4 @@ class MainActivity : VpnActivity() {
         }
     }
 }
+

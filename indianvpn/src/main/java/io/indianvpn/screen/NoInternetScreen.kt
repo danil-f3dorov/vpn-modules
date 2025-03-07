@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.indianvpn.R
-import common.util.extensions.isNetworkAvailable
+import core.util.extensions.isNetworkAvailable
 import io.indianvpn.compose.GradientButton
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.labelLarge

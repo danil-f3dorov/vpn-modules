@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import common.util.ui.NoRippleInteractionSource
+import core.util.ui.NoRippleInteractionSource
 import io.indianvpn.ui.theme.darkPeach
 import io.indianvpn.ui.theme.yellow
 

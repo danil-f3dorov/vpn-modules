@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.common.R
+import com.core.R
 
 
 @Composable
@@ -13,13 +13,13 @@ fun VpnItemWithPing(
     imageId: Int,
     country: String,
     ip: String,
-    rowModifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     VpnItemSample(
-        imageId,
-        country,
-        ip,
-        rowModifier = rowModifier
+        imageId = imageId,
+        country = country,
+        ip = ip,
+        modifier = modifier
     ) {
         Image(
             painter = painterResource(com.indianvpn.R.drawable.ic_ping),

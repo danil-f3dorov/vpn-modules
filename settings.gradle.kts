@@ -31,7 +31,7 @@ rootProject.name = "vpn-modules"
 include(":vpnduckapp")
 include(":vpndonkeyapp")
 include(":indianvpn")
-include(":common")
+include(":core")
 include(":vpn")
 include(":dunta_sdk")
 include(":data")

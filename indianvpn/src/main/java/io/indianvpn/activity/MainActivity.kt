@@ -3,9 +3,9 @@ package io.indianvpn.activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import common.activity.VpnActivity
-import common.nav.NavigationScreens
-import common.nav.VpnNavigation
+import core.activity.VpnActivity
+import core.nav.NavigationScreens
+import core.nav.VpnNavigation
 import io.indianvpn.screen.FetchServerScreen
 import io.indianvpn.screen.HomeScreen
 import io.indianvpn.screen.NoInternetScreen

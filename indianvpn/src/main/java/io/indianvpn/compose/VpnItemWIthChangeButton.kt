@@ -13,8 +13,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.common.R
-import common.util.ui.NoRippleInteractionSource
+import com.core.R
+import core.util.ui.NoRippleInteractionSource
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.textColor2
 

@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import common.util.timer.StopwatchManager
+import core.util.timer.StopwatchManager
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.color1
 

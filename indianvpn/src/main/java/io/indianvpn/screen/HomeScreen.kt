@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.indianvpn.R
-import common.util.enum.HomeScreenState
-import common.util.timer.StopwatchManager
+import core.util.enum.ScreenState
+import core.util.timer.StopwatchManager
 import io.indianvpn.compose.ConnectButton
 import io.indianvpn.compose.Stopwatch
 import io.indianvpn.compose.VpnItemWithChangeButton
@@ -40,7 +40,7 @@ fun HomeScreen(
     imageId: Int?,
     countryName: String?,
     ip: String?,
-    screenState: State<HomeScreenState>,
+    screenState: State<ScreenState>,
     onClickConnect: () -> Unit,
     onClickChange: () -> Unit,
     onClickStopVpn: () -> Unit
@@ -82,7 +82,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (screenState.value) {
-                HomeScreenState.Disconnected -> {
+                ScreenState.Disconnected -> {
                     Text(
                         text = "DISCONNECTED",
                         fontFamily = Gilroy.medium,
@@ -91,7 +91,7 @@ fun HomeScreen(
                         color = textColor2
                     )
                 }
-                HomeScreenState.Connected -> {
+                ScreenState.Connected -> {
                     StopwatchManager.start()
                     Text(
                         text = "CONNECTED",
@@ -103,7 +103,7 @@ fun HomeScreen(
                     Spacer(Modifier.height(8.dp))
                     Stopwatch()
                 }
-                HomeScreenState.Connecting -> {
+                ScreenState.Connecting -> {
                 }
             }
         }
@@ -133,14 +133,14 @@ fun HomeScreen(
         }
     }
     when(screenState.value) {
-        HomeScreenState.Disconnected -> {
+        ScreenState.Disconnected -> {
             StopwatchManager.stop()
         }
-        HomeScreenState.Connected ->  {
+        ScreenState.Connected ->  {
             StopwatchManager.start()
 
         }
-        HomeScreenState.Connecting -> {
+        ScreenState.Connecting -> {
 
         }
     }
@@ -151,10 +151,10 @@ fun HomeScreen(
 @Preview
 private fun HomeScreenPreview() {
     HomeScreen(
-        com.common.R.drawable.ic_russia,
+        com.core.R.drawable.ic_russia,
         "Novosibirsk",
         "123.456.789.000",
-        mutableStateOf(HomeScreenState.Disconnected),
+        mutableStateOf(ScreenState.Disconnected),
         {},
         {},
         {}
