@@ -1,12 +1,14 @@
 package core.viewmodel
 
 import android.Manifest
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.TextView
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -17,7 +19,6 @@ import com.core.R
 import com.fasterxml.jackson.databind.ObjectMapper
 import core.App
 import core.App.Companion.duntaManager
-import core.activity.VpnActivity
 import core.data.remote.model.FetchServerListResponse
 import core.domain.model.Server
 import core.domain.usecase.AddServerListUseCase
@@ -89,12 +90,16 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun observeTraffic(activity: VpnActivity) {
+    fun observeTraffic(tvDownloadSpeed: TextView? = null, tvUploadSpeed: TextView? = null,  activity: Activity) {
         viewModelScope.launch(Dispatchers.Default) {
             VpnTrafficObserver.downloadSpeed.combine(VpnTrafficObserver.uploadSpeed) { downloadSpeed, uploadSpeed ->
                 Pair(parseSpeed(downloadSpeed), parseSpeed(uploadSpeed))
             }.collect { (parsedDownloadSpeed, parsedUploadSpeed) ->
                 withContext(Dispatchers.Main) {
+                    if (tvDownloadSpeed != null && tvUploadSpeed != null) {
+                        tvDownloadSpeed.text = parsedDownloadSpeed
+                        tvUploadSpeed.text = parsedUploadSpeed
+                    }
                     notification(
                         "↑ $parsedDownloadSpeed kb/s ↓ $parsedUploadSpeed kb/s", activity
                     )
@@ -105,7 +110,7 @@ class MainViewModel @Inject constructor(
 
     fun fetchServerList(
         noNetwork: () -> Unit,
-        navHome: () -> Unit
+        navHome: (Server) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO + CoroutineName("Денчик")).launch {
             val listVersion = getListVersionUseCase()
@@ -149,18 +154,18 @@ class MainViewModel @Inject constructor(
     private suspend fun setCurrentServer(
         serverList: List<Server>,
         noNetwork: () -> Unit,
-        navHome: () -> Unit
+        navHome: (Server) -> Unit
     ) {
         val nonZeroRServers = serverList.filter { (it.r ?: 0) > 0 }
         if (nonZeroRServers.isNotEmpty()) {
             currentServer = nonZeroRServers.random()
             withContext(Dispatchers.Main) {
-                navHome()
+                navHome(currentServer!!)
             }
         } else if (serverList.isNotEmpty()) {
             currentServer = serverList.random()
             withContext(Dispatchers.Main) {
-                navHome()
+                navHome(currentServer!!)
             }
         } else {
             val serverListDB = getServerListUseCase()
@@ -234,7 +239,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun notification(speed: String, homeActivity: VpnActivity) {
+    private fun notification(speed: String, homeActivity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel =
                 NotificationChannel("1", "notification", NotificationManager.IMPORTANCE_LOW)

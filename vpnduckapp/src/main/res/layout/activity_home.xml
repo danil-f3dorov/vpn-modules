@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="">
+
+        <ImageView
+            android:id="@+id/placeholder1"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/newui_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivCountryIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_china"
+            app:layout_constraintBottom_toBottomOf="@+id/placeholder1"
+            app:layout_constraintStart_toStartOf="@+id/placeholder1"
+            app:layout_constraintTop_toTopOf="@+id/placeholder1" />
+
+        <TextView
+            android:id="@+id/tvCountryName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:maxLines="1"
+            android:text="China"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/ivArrow"
+            app:layout_constraintStart_toEndOf="@+id/ivCountryIcon"
+
+            app:layout_constraintTop_toTopOf="@+id/placeholder1" />
+
+        <TextView
+            android:id="@+id/tvIpAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="120.198.46.22"
+            android:textColor="@color/dim"
+            app:layout_constraintStart_toStartOf="@+id/tvCountryName"
+            app:layout_constraintTop_toBottomOf="@+id/tvCountryName" />
+
+        <ImageView
+            android:id="@+id/ivArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_arrow_right"
+            app:layout_constraintBottom_toBottomOf="@+id/placeholder1"
+            app:layout_constraintEnd_toEndOf="@+id/placeholder1"
+            app:layout_constraintTop_toTopOf="@+id/placeholder1" />
+
+        <ImageView
+            android:id="@+id/placeholder2"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/newui_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/placeholder1" />
+
+        <ImageView
+            android:id="@+id/ivArrowUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="4dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_arrow_up"
+            app:layout_constraintEnd_toStartOf="@+id/tvDownload"
+            app:layout_constraintStart_toStartOf="@+id/placeholder2"
+            app:layout_constraintTop_toTopOf="@+id/placeholder2" />
+
+        <TextView
+            android:id="@+id/tvDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="43dp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"
+            android:text="@string/download"
+            android:textColor="@color/dim"
+            app:layout_constraintEnd_toStartOf="@+id/ivDivideLine"
+            app:layout_constraintStart_toEndOf="@+id/ivArrowUp"
+            app:layout_constraintTop_toTopOf="@+id/placeholder2" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/tvDownload"
+            app:layout_constraintStart_toStartOf="@+id/ivArrowUp"
+            app:layout_constraintTop_toBottomOf="@+id/tvDownload">
+
+            <TextView
+                android:id="@+id/tvDownloadSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="@string/mockspeed"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+
+            <TextView
+                android:id="@+id/tvKbsDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/kb_s" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivDivideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:src="@drawable/divide_line"
+            app:layout_constraintBottom_toBottomOf="@+id/placeholder2"
+            app:layout_constraintEnd_toEndOf="@+id/placeholder2"
+            app:layout_constraintStart_toStartOf="@+id/placeholder2"
+            app:layout_constraintTop_toTopOf="@+id/placeholder2" />
+
+        <ImageView
+            android:id="@+id/ivArrowDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="14dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/newui_ic_arrow_down"
+            app:layout_constraintEnd_toStartOf="@+id/tvUpload"
+            app:layout_constraintStart_toEndOf="@+id/ivDivideLine"
+            app:layout_constraintTop_toTopOf="@+id/placeholder2" />
+
+        <TextView
+            android:id="@+id/tvUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="50dp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"
+            android:text="@string/upload"
+            android:textColor="@color/dim"
+            app:layout_constraintEnd_toEndOf="@+id/placeholder2"
+            app:layout_constraintStart_toEndOf="@+id/ivArrowDown"
+            app:layout_constraintTop_toTopOf="@+id/placeholder2" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/tvUpload"
+            app:layout_constraintStart_toStartOf="@+id/ivArrowDown"
+            app:layout_constraintTop_toBottomOf="@+id/tvDownload">
+
+            <TextView
+                android:id="@+id/tvUploadSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="@string/mockspeed"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/tvKbsUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/kb_s" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tvStatusInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="38dp"
+            android:fontFamily="@font/plus_jakarta_sans_extrabold"
+            android:gravity="center_horizontal"
+            android:text="@string/click_to_connect"
+            android:textColor="@color/white"
+            android:textSize="35sp"
+            app:layout_constraintEnd_toEndOf="@+id/ivButtonBackground"
+            app:layout_constraintStart_toStartOf="@+id/ivButtonBackground"
+            app:layout_constraintTop_toBottomOf="@+id/placeholder2" />
+
+        <ImageView
+            android:id="@+id/ivButtonBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:src="@drawable/sphere"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvStatusInfo" />
+
+        <ImageButton
+            android:id="@+id/ibConnect"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@color/transient1"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_connect"
+            app:layout_constraintBottom_toBottomOf="@+id/ivButtonBackground"
+            app:layout_constraintEnd_toEndOf="@+id/ivButtonBackground"
+            app:layout_constraintStart_toStartOf="@+id/ivButtonBackground"
+            app:layout_constraintTop_toBottomOf="@+id/tvStatusInfo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import core.util.timer.StopwatchManager
 import io.indianvpn.compose.ConnectButton
 import io.indianvpn.compose.Stopwatch
 import io.indianvpn.compose.VpnItemWithChangeButton
+import io.indianvpn.compose.wrapNoNetwork
 import io.indianvpn.ui.theme.Gilroy
 import io.indianvpn.ui.theme.labelLarge
 import io.indianvpn.ui.theme.textColor2
@@ -43,9 +45,11 @@ fun HomeScreen(
     screenState: State<ScreenState>,
     onClickConnect: () -> Unit,
     onClickChange: () -> Unit,
-    onClickStopVpn: () -> Unit
+    onClickStopVpn: () -> Unit,
+    navNoInternet: () -> Unit
 ) {
 
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -91,6 +95,7 @@ fun HomeScreen(
                         color = textColor2
                     )
                 }
+
                 ScreenState.Connected -> {
                     StopwatchManager.start()
                     Text(
@@ -103,6 +108,7 @@ fun HomeScreen(
                     Spacer(Modifier.height(8.dp))
                     Stopwatch()
                 }
+
                 ScreenState.Connecting -> {
                 }
             }
@@ -117,13 +123,23 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             VpnItemWithChangeButton(
-                imageId, countryName, ip, onClickChange
+                imageId, countryName, ip, onClickChange = {
+                    wrapNoNetwork(
+                        context = context,
+                        action = onClickChange,
+                        navNoInternet = navNoInternet
+                    )
+                }
             )
             Spacer(Modifier.height(16.dp))
             ConnectButton(
                 screenState = screenState.value,
                 onClickConnect = {
-                    onClickConnect()
+                    wrapNoNetwork(
+                        context = context,
+                        action = onClickConnect,
+                        navNoInternet = navNoInternet
+                    )
                 },
                 onClickStopVpn = {
                     onClickStopVpn()
@@ -132,14 +148,16 @@ fun HomeScreen(
 
         }
     }
-    when(screenState.value) {
+    when (screenState.value) {
         ScreenState.Disconnected -> {
             StopwatchManager.stop()
         }
-        ScreenState.Connected ->  {
+
+        ScreenState.Connected -> {
             StopwatchManager.start()
 
         }
+
         ScreenState.Connecting -> {
 
         }
@@ -155,6 +173,7 @@ private fun HomeScreenPreview() {
         "Novosibirsk",
         "123.456.789.000",
         mutableStateOf(ScreenState.Disconnected),
+        {},
         {},
         {},
         {}

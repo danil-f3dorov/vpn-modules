@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name="io.indianvpn.activity.MainActivity"
+            android:name="io.indianvpn.activity.MainComponentActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

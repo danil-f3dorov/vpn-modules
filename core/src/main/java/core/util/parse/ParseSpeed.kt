@@ -1,7 +1,18 @@
 package core.util.parse
 
+import core.domain.model.Server
 
 object ParseSpeed {
+    fun convertSpeedForAdapter(server: Server): String {
+        val speedInMB = server.speed.toLong() / 1048576
+        return if (speedInMB > 0) {
+            "$speedInMB"
+        } else {
+            val speedInKB = server.speed.toLong() / 1024
+            "$speedInKB"
+        }
+    }
+
     fun parseSpeed(speed: String?): String {
         try {
             if (speed == null) return ""

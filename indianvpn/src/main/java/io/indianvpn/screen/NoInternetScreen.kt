@@ -45,11 +45,7 @@ fun NoInternetScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_back),
-                contentDescription = "back",
-                tint = textColor2
-            )
+            Spacer(Modifier)
             Text(
                 text = "VPN",
                 style = labelLarge

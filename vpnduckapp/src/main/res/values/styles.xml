@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="backgroundColor">@color/background</item>
+        <item name="android:textColorHint">@color/grey_lilac</item>
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_medium</item>
+    </style>
+
+</resources>
